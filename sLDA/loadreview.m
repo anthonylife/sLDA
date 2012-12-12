@@ -23,7 +23,8 @@ fclose(rfd);
 
 % Fill the doc structure
 doc = repmat(struct('id', [], 'rate', [], 'word', [], 'docwordnum', []), 1, docnum);
-corp = struct('doc', doc, 'docnum', docnum, 'dicwordnum', dicwordnum);
+corp = struct('doc', doc, 'docnum', docnum, 'dicwordnum', dicwordnum, 'rate', ...
+    repmat(0.0, 1, docnum));
 
 rfd = fopen(trainfile, 'r');
 docnum = 0;
@@ -33,6 +34,7 @@ while ~feof(rfd),
     parts = strread(inline, '%s', 'delimiter', ' ');
     corp.doc(docnum).id = str2num(parts(1));
     corp.doc(docnum).rate = str2num(parts(2));
+    corp.rate(docnum)= corp.doc(docnum).rate;
     uniqwordnum = length(parts) - 2;
     
     corp.doc(docnum).word = repmat(0, 1, dicwordnum);
