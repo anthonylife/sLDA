@@ -18,9 +18,11 @@ global model;
 model.beta = normalize(model.betas', 2);
 
 % Note, we fix alpha accroding to the original paper for simplicity.
+% This is like that all documemnts share the same topic propostions.
+% More importantly, ensure the train regression condition is similar
 
+% update regression parameters, i.e., eta, sigma.
 y = docs.rate';
 E_AA_inv = inv(E_AA);
-% update regression parameters, i.e., eta, sigma.
 model.eta = E_AA_inv*E_A'*y;
 model.sigma = (y'*y-y'E_A*E_AA_inv*E_A'*y)/docs.docnum;

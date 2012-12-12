@@ -70,4 +70,7 @@ for iter=1:maxIter,
 
     % compute train data log-likelihood
     % =================================
+    [llhood, perword_llhood]= getllhood(traindata);
+    fprintf(1, 'corpus log-likelihood   = %f\n', llhood);
+    fprintf(1, 'per-word log-likelihood = %f\n', perword_llhood);
 end

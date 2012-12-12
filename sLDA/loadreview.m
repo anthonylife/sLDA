@@ -24,9 +24,10 @@ fclose(rfd);
 % Fill the doc structure
 doc = repmat(struct('id', [], 'rate', [], 'word', [], 'docwordnum', []), 1, docnum);
 corp = struct('doc', doc, 'docnum', docnum, 'dicwordnum', dicwordnum, 'rate', ...
-    repmat(0.0, 1, docnum));
+    repmat(0.0, 1, docnum), 'totalwords', []);
 
 rfd = fopen(trainfile, 'r');
+corp.totalwords = 0;
 docnum = 0;
 while ~feof(rfd),
     inline = fgetl(rfd);
@@ -46,7 +47,7 @@ while ~feof(rfd),
     end
    
     corp.doc(docnum).docwordnum = wordnum;
-    
+    corp.totalwords = corp.totalwords + wordnum;
     %{
     wordnum = 0;
     for i=1:uniqwordnum,
