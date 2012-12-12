@@ -10,7 +10,6 @@
 %   (3).Evaluation, mainly prediction.
 %
 % Date: 12/11/2012
-%
 
 
 % (1)----------------------------------------------
@@ -22,6 +21,7 @@ testfile = '../datasets/test.dat';
 maxIter = 50;   % maximal number of iterations for VBEM
 vbe_maxIter = 20;   % maximal number of iteration for VBE-step
 wordNum = 12000;    % just based on dictionary statistic information
+%output_interval = 5;
 traindata = loadreview(trainfile, wordNum);  % load review text data
 
 % model parameters
@@ -71,6 +71,26 @@ for iter=1:maxIter,
     % compute train data log-likelihood
     % =================================
     [llhood, perword_llhood]= getllhood(traindata);
-    fprintf(1, 'corpus log-likelihood   = %f\n', llhood);
-    fprintf(1, 'per-word log-likelihood = %f\n', perword_llhood);
+    fprintf(1, 'Corpus log-likelihood     = %f\n', llhood);
+    fprintf(1, 'Per-word log-likelihood   = %f\n', perword_llhood);
+    fprintf(1, 'Total time cost up to now = %f\n', toc);        
 end
+
+
+% (3)------------------------------
+% Rating Prediction on the test set
+% =================================
+fprintf(1, 'Evaluation the prediction results on test data#n');
+
+testdata = loadreview(testfile, wordNum);
+pre_rate = repmat(0.0, 1, testdata.docnum);
+
+for i=1:testdata.docnum,
+    [betas, temp1, temp2] = vbe_step(testdata.doc(i), wordNum);
+    aver_beta = sum(betas(testdata.doc(i).word, :), 1)...
+        ./testdata.doc(i).docwordnum;
+    pre_rate(i) = [aver_beta, 1] * model.eta;
+end
+
+eval_result = predictiveR2(testdata.rate, pre_rate);
+fprintf(1, 'The result of predictive R2 is %f\n', eval_result);

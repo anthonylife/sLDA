@@ -18,7 +18,7 @@ function [betas, E_Ai, E_AA] = vbe_step(doc, dicwordnum, E_AA, vbe_maxIter)
 %
 
 
-if nargin < 3,
+if nargin < 4,
     vbe_maxIter = 20;
 end
 
@@ -47,14 +47,16 @@ for i=1:vbe_maxIter,
     model.gammas(docIdx,:) = gammas;
 end
 
-betas_sum = sum(diag(doc.word)*betas, 1);
-E_Ai = [betas_sum./doc.docwordnum, 1];  % addition dimension for bias
-temp_E_AA = repmat(0.0, model.K+1, model.K+1);
-for i=1:dicwordnum,
-    for j=1:doc.word(i),
-        temp_E_AA = temp_E_AA + [betas(i,:), 1]'*([betas_sum, doc.docwordnum]...
-            - [betas(i,:), 1]) + diag([betas(i,:), 1]);
+if nargin > 2,
+    betas_sum = sum(diag(doc.word)*betas, 1);
+    E_Ai = [betas_sum./doc.docwordnum, 1];  % addition dimension for bias
+    temp_E_AA = repmat(0.0, model.K+1, model.K+1);
+    for i=1:dicwordnum,
+        for j=1:doc.word(i),
+            temp_E_AA = temp_E_AA + [betas(i,:), 1]'*([betas_sum, ...
+                doc.docwordnum]-[betas(i,:), 1]) + diag([betas(i,:), 1]);
+        end
     end
+    temp_E_AA = temp_E_AA ./ doc.docwordnum^2;
+    E_AA = E_AA + temp_E_AA;
 end
-temp_E_AA = temp_E_AA ./ doc.docwordnum^2;
-E_AA = E_AA + temp_E_AA;

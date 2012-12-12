@@ -1,0 +1,2 @@
+1.<Supervised Topic Model>, (NIPS, 2007, David. Blei, etc.)
+2.<Latent Dirichlet Allocation>, (JMLR, 2003, David. Blei, etc.)
