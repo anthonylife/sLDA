@@ -35,15 +35,17 @@ while ~feof(rfd),
     corp.doc(docnum).rate = str2num(parts(2));
     uniqwordnum = length(parts) - 2;
     
+    corp.doc(docnum).word = repmat(0, 1, dicwordnum);
     wordnum = 0;    % total number of words in each document, including repeated words
     for i=1:uniqwordnum,
         [tempid, tempnum]= strread(parts(i+2), '%d', 'delimiter', ':');
         wordnum = wordnum + tempnum;
+        corp.doc(docnum).word(tempid) = tempnum;
     end
    
     corp.doc(docnum).docwordnum = wordnum;
-    corp.doc(docnum).word = repmat(0, 1, wordnum);
     
+    %{
     wordnum = 0;
     for i=1:uniqwordnum,
         [wordid, repeatednum] = strread(parts(i+2), '%d', 'delimiter', ':');
@@ -52,5 +54,6 @@ while ~feof(rfd),
             corp.doc(docnum).word(wordnum) = wordid;
         end
     end
+    %}
 end
 fclose(rfd);
