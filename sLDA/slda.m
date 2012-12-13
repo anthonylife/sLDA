@@ -93,4 +93,4 @@ for i=1:testdata.docnum,
 end
 
 eval_result = predictiveR2(testdata.rate, pre_rate);
-fprintf(1, 'The result of predictive R2 is %f\n', eval_result);
+fprintf(1, 'The result of predictive R2 for sLDA is %f\n', eval_result);
