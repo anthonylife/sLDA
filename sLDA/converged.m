@@ -1,7 +1,7 @@
 function tag = converged(vec1, vec2, threshold)
 %
 %   CONVERGED judges whether the difference of the two tensors
-%   is below the specified threshold.
+%   (1-2 dimension) is below the specified threshold.
 %
 %   Input Variable:
 %       vec1 --> the first vector.
@@ -15,7 +15,13 @@ if nargin < 3,
     threshold = 1.0e-2;
 end
 
-dim = length(size(vec1));
+dim = size(vec1);
+if dim(1) > 1,
+    dim = 2;
+elseif,
+    dim = 1;
+end
+
 diff = abs(vec1 - vec2);
 for i=1:dim,
     diff = sum(diff);

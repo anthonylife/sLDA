@@ -7,7 +7,7 @@
 %       (1.1)global variables and model parameters setting;
 %       (1.2)review text loading;
 %   (2).For each document, do variational inference;
-%   (3).Evaluation, mainly prediction.
+%   (3).Evaluation, mainly including prediction.
 %
 % Date: 12/11/2012
 
@@ -15,25 +15,26 @@
 % (1)----------------------------------------------
 % Global variable and model hyperparameters setting
 % =================================================
-trainfile = '../datasets/train.dat';
-testfile = '../datasets/test.dat';
+trainfile = '../datasets/train_review.dat';
+testfile = '../datasets/test_review.dat';
 
 maxIter = 50;   % maximal number of iterations for VBEM
 vbe_maxIter = 20;   % maximal number of iteration for VBE-step
 wordNum = 12000;    % just based on dictionary statistic information
-%output_interval = 5;
 traindata = loadreview(trainfile, wordNum);  % load review text data
 
 % model parameters
 global model;
 model.K = 20;   % topic dimension
 model.alpha = repmat(1/model.K, 1, model.K);
-model.beta = repmat(1/wordNum, model.K, wordNum);
+model.beta = repmat(1/wordNum, model.K, wordNum);   % model word-topic paras
 model.eta = repmat(1/model.K, model.K+1, 1);  % new parameter relative to LDA
-model.sigma = 1;    
-model.gammas = repmat(model.alpha+repmat(traindata.doc(i).docwordnum/...
-    model.K, 1, model.K), traindata.docnum, 1);   % variational parameter
-
+model.sigma = 1;   
+for i=1:traindata.docnum,
+    % variational parameter
+    model.gammas(i,:) = model.alpha ...
+        + repmat(traindata.doc(i).docwordnum/model.K, 1, model.K);
+end
 
 % (2)-------------------------------------------
 % For each document, do variational EM inference
@@ -42,11 +43,9 @@ fprintf(1, 'Number of documents = %d\n', traindata.docnum);
 fprintf(1, 'Number of words     = %d\n', wordNum);
 fprintf(1, 'Number of topics    = %d\n', model.K);
     
-%model.betas = repmat(0, wordNum, model.K);  % variational parameters
-%corpus.betas = repmat(model.betas, traindata.docnum, 1);
-
+% training iteration starts
 for iter=1:maxIter,
-    fprintf(1, 'Current number of iterations: %d\n', iter);
+    fprintf(1, 'Current number of the iteration: %d\n', iter);
     
     % additional two expectation values used for updating 'eta' and 'sigma'
     E_A = repmat(0.0, traindata.docnum, model.K+1);
@@ -71,16 +70,16 @@ for iter=1:maxIter,
     % compute train data log-likelihood
     % =================================
     [llhood, perword_llhood]= getllhood(traindata);
-    fprintf(1, 'Corpus log-likelihood     = %f\n', llhood);
-    fprintf(1, 'Per-word log-likelihood   = %f\n', perword_llhood);
-    fprintf(1, 'Total time cost up to now = %f\n', toc);        
+    fprintf(1, 'Corpus log-likelihood         = %f\n', llhood);
+    fprintf(1, 'Per-word log-likelihood       = %f\n', perword_llhood);
+    fprintf(1, 'Up to now the total time cost = %f\n', toc);        
 end
 
 
 % (3)------------------------------
 % Rating Prediction on the test set
 % =================================
-fprintf(1, 'Evaluation the prediction results on test data#n');
+fprintf(1, 'Evaluation the prediction results on test data\n');
 
 testdata = loadreview(testfile, wordNum);
 pre_rate = repmat(0.0, 1, testdata.docnum);

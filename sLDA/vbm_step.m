@@ -25,4 +25,4 @@ model.beta = normalize(model.betas', 2);
 y = docs.rate';
 E_AA_inv = inv(E_AA);
 model.eta = E_AA_inv*E_A'*y;
-model.sigma = (y'*y-y'E_A*E_AA_inv*E_A'*y)/docs.docnum;
+model.sigma = (y'*y-y'E_A*model.eta)/docs.docnum;
