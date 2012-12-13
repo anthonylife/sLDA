@@ -17,6 +17,7 @@
 % =================================================
 trainfile = '../datasets/train_review.dat';
 testfile = '../datasets/test_review.dat';
+resultfile = '../results/result.slda.txt';
 
 maxIter = 50;   % maximal number of iterations for VBEM
 vbe_maxIter = 20;   % maximal number of iteration for VBE-step
@@ -61,9 +62,11 @@ global npara_part2;
 npara_part1 = repmat(0.0, wordNum, 1);
 npara_part2 = repmat(0.0, wordNum, 1);
 
+wfd = fopen(resultfile, 'w');
 % training iteration starts
 for iter=1:maxIter,
     fprintf(1, 'Current number of the iteration: %d\n', iter);
+    fprintf(wfd, 'Current number of the iteration: %d\n', iter);
     
     for i=1:traindata.docnum,
         [E_A(i,:), E_AA] = vbe_step(traindata.doc(i), wordNum, ...
@@ -82,13 +85,16 @@ for iter=1:maxIter,
     fprintf(1, 'Corpus log-likelihood         = %f\n', llhood);
     fprintf(1, 'Per-word log-likelihood       = %f\n', perword_llhood);
     fprintf(1, 'Up to now the total time cost = %f\n', toc);        
+    fprintf(wfd, 'Corpus log-likelihood         = %f\n', llhood);
+    fprintf(wfd, 'Per-word log-likelihood       = %f\n', perword_llhood);
+    fprintf(wfd, 'Up to now the total time cost = %f\n', toc);        
     
     % clear
     E_A(:,:) = 0.0;
     E_AA(:,:) = 0.0;
     model.betas(:,:) = 0;
 end
-
+wfd.close();
 
 % (3)------------------------------
 % Rating Prediction on the test set
