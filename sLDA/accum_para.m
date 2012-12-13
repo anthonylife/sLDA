@@ -1,17 +1,18 @@
-function new_betas = accum_para(old_betas, inc_betas, doc)
+function accum_para(doc, wordNum)
 %
 %   ACCUM_PARA accumulates betas from each document and then
 %   normalizes them.
 %
 %   Input variable:
-%       old_betas --> accumulated values of betas from the first
-%           document to the previous document.
-%       inc_betas --> values of betas of current document.
-%
-%   Output variable:
-%       new_betas --> updated betas.
+%       doc --> current document       
+%       wordNum --> total number of words' dictionary
 %
 %   Date: 12/12/2012
 
 
-new_betas = old_betas + diag(doc.word)*inc_betas;
+global model;
+global betas;
+
+betas(doc.word_id,:) = diag(doc.word)*betas(doc.word_id,:);
+betas(setdiff([1:wordNum], doc.word_id),:) = 0;
+model.betas = model.betas + betas;

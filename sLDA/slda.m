@@ -43,24 +43,33 @@ fprintf(1, 'Number of documents = %d\n', traindata.docnum);
 fprintf(1, 'Number of words     = %d\n', wordNum);
 fprintf(1, 'Number of topics    = %d\n', model.K);
     
+% block coordinate-ascent variational inference
+% variational bayesian E-step
+% ===========================
+model.betas = repmat(0, wordNum, model.K);  % variational parameters
+% notes it needs to be accumulated for each document
+global betas;
+betas = repmat(1/model.K, wordNum, model.K);
+
+% additional two expectation values used for updating 'eta' and 'sigma'
+E_A = repmat(0.0, traindata.docnum, model.K+1);
+E_AA = repmat(0.0, model.K+1, model.K+1);
+
+% memory allocation in advance
+global npara_part1;
+global npara_part2;
+npara_part1 = repmat(0.0, wordNum, 1);
+npara_part2 = repmat(0.0, wordNum, 1);
+
 % training iteration starts
 for iter=1:maxIter,
     fprintf(1, 'Current number of the iteration: %d\n', iter);
     
-    % additional two expectation values used for updating 'eta' and 'sigma'
-    E_A = repmat(0.0, traindata.docnum, model.K+1);
-    E_AA = repmat(0.0, model.K+1, model.K+1);
-    
-    % block coordinate-ascent variational inference
-    % variational bayesian E-step
-    % ===========================
-    model.betas = repmat(0, wordNum, model.K);  % variational parameters
-    % notes it needs to be accumulated for each document
-    
     for i=1:traindata.docnum,
-        [betas, E_A(i,:), E_AA] = vbe_step(traindata.doc(i), wordNum, ...
+        [E_A(i,:), E_AA] = vbe_step(traindata.doc(i), wordNum, ...
             E_AA, vbe_maxIter);    
-        model.betas = accum_para(model.betas, betas, traindata.doc(i));
+        accum_para(traindata.doc(i), wordNum);
+        betas(:,:) = 1/model.K;
     end
 
     % variational bayesian M-step
@@ -73,6 +82,11 @@ for iter=1:maxIter,
     fprintf(1, 'Corpus log-likelihood         = %f\n', llhood);
     fprintf(1, 'Per-word log-likelihood       = %f\n', perword_llhood);
     fprintf(1, 'Up to now the total time cost = %f\n', toc);        
+    
+    % clear
+    E_A(:,:) = 0.0;
+    E_AA(:,:) = 0.0;
+    model.betas(:,:) = 0;
 end
 
 
@@ -86,8 +100,8 @@ pre_rate = repmat(0.0, 1, testdata.docnum);
 
 for i=1:testdata.docnum,
     [betas, temp1, temp2] = vbe_step(testdata.doc(i), wordNum);
-    aver_beta = sum(betas(testdata.doc(i).word, :), 1)...
-        ./testdata.doc(i).docwordnum;
+    aver_beta = sum(diag(testdata.doc(i).word)...
+        *betas(testdata.doc(i).word_id, :), 1)./testdata.doc(i).docwordnum;
     pre_rate(i) = [aver_beta, 1] * model.eta;
 end
 

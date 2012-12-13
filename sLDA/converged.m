@@ -18,7 +18,7 @@ end
 dim = size(vec1);
 if dim(1) > 1,
     dim = 2;
-elseif,
+else,
     dim = 1;
 end
 
