@@ -14,12 +14,11 @@ function vbm_step(docs, E_A, E_AA)
 
 global model;
 
-% update Beta
-model.beta = normalize(model.betas', 2);
+% update beta
+model.beta = normalize(model.betas', 2); 
 
-% Note, we fix alpha accroding to the original paper for simplicity.
-% This is like that all documemnts share the same topic propostions.
-% More importantly, ensure the train regression condition is similar
+% Newton method to update alpah
+model.alpha = newton_alpha(model.gammas);
 
 % update regression parameters, i.e., eta, sigma.
 y = docs.rate';

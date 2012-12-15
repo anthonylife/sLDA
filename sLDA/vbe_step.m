@@ -1,4 +1,4 @@
-function [E_Ai, E_AA] = vbe_step(doc, dicwordnum, E_AA, vbe_maxIter)
+function [E_Ai, E_AA, doc_llhood] = vbe_step(doc, dicwordnum, E_AA, vbe_maxIter)
 %
 %   VBE_STEP achieves the E-step of variational bayesian EM
 %   inference method.
@@ -11,8 +11,9 @@ function [E_Ai, E_AA] = vbe_step(doc, dicwordnum, E_AA, vbe_maxIter)
 %       vbe_maxIter --> maximal number of iterations for VBE-step 
 %
 %   Output variable:
-%       betas --> word topic variational parameter for each
-%           document
+%       E_Ai --> Expectation of A which used for optimizing elta and sigma
+%       E_AA --> Similar as the previous one
+%       doc_llhood --> the likelihood of document
 %
 %   Date: 12/12/2012
 %
@@ -24,30 +25,45 @@ end
 
 global model;
 global betas;
-global npara_part1;
-global npara_part2;
 
 docIdx = doc.id;
-for i=1:vbe_maxIter,
-    gammas = model.alpha + sum(diag(doc.word)*betas(doc.word_id,:), 1);
 
+% Reinitialization for each document in every turn
+betas(:,:) = 1/model.K;
+model.gammas(docIdx,:) = model.alpha ...
+    + repmat(doc.docwordnum/model.K, 1, model.K);
+
+for i=1:vbe_maxIter,
     % The influence of new parameters on updating beta
+    doc_llhood = getdocllhood(doc, 'train');
+    fprintf('document %d, likelihood: %f\n', doc.id, doc_llhood);
+    
     npara_part1 = repmat(doc.rate/(doc.docwordnum*model.sigma)*...
         model.eta(1:end-1)' - model.eta(1:end-1)'.*model.eta(1:end-1)'...
-        /(2*doc.docwordnum^2*model.sigma), dicwordnum, 1);
-    npara_part2 = 2*(repmat(sum(betas, 1), dicwordnum, 1)...
-        - betas)*model.eta(1:end-1)*model.eta(1:end-1)'...
-        /(2*doc.docwordnum^2*model.sigma);
-
-    betas = normalize((model.beta'*diag(exp(psi(model.gammas(docIdx,...
-        :)))).*exp(npara_part1 - npara_part2)), 2);
+        /(2*doc.docwordnum^2*model.sigma), length(doc.word_id), 1);
     
-    if (i>1) && converged(model.gammas(docIdx,:), gammas, 1.0e-2),
+    npara_part2 = 2*(repmat(sum(diag(doc.word)*betas(doc.word_id,:),1),length(doc.word_id),1)...
+        - diag(doc.word)*betas(doc.word_id,:)) * model.eta(1:end-1)...
+        * model.eta(1:end-1)' / (2*doc.docwordnum^2*model.sigma);
+
+    betas(doc.word_id,:) = normalize(model.beta(:,doc.word_id)'...
+        *diag(exp(psi(model.gammas(docIdx,:))))...
+        .*exp(npara_part1 - npara_part2), 2);
+    
+    gammas = model.alpha + sum(diag(doc.word)*betas(doc.word_id,:), 1);
+    
+    if i>1 && converged(model.gammas(docIdx,:), gammas, 1.0e-3),
         model.gammas(docIdx,:) = gammas;
         break;
     end
     model.gammas(docIdx,:) = gammas;
+
+    doc_llhood = getdocllhood(doc, 'train');
+    fprintf('document %d, likelihood: %f\n', doc.id, doc_llhood);
+    pause;
 end
+
+doc_llhood = getdocllhood(doc, 'train');
 
 if nargin > 2,
     betas_sum = sum(diag(doc.word)*betas(doc.word_id,:), 1);
@@ -56,10 +72,13 @@ if nargin > 2,
     for i=1:length(doc.word),     % Two loops --> O(N)
         for j=1:doc.word(i),
             temp_E_AA = temp_E_AA + [betas(doc.word_id(i),:), 1]'*([betas_sum, ...
-                doc.docwordnum]-[betas(doc.word_id(i),:), 1]) ...
-                + diag([betas(doc.word_id(i),:), 1]);
+                doc.docwordnum]-[betas(doc.word_id(i),:), 1])...
+                + diag([betas(doc.word_id(i), :)'; 1]);
         end
     end
     temp_E_AA = temp_E_AA ./ doc.docwordnum^2;
     E_AA = E_AA + temp_E_AA;
+else
+    E_Ai = 0;
+    E_AA = 0;
 end

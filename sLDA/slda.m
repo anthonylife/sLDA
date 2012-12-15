@@ -15,11 +15,16 @@
 % (1)----------------------------------------------
 % Global variable and model hyperparameters setting
 % =================================================
+% debug variable
+global doc_llhood;
+
+rand('state', sum(100*clock));
+
 trainfile = '../datasets/train_review.dat';
 testfile = '../datasets/test_review.dat';
 resultfile = '../results/result.slda.txt';
 
-maxIter = 50;   % maximal number of iterations for VBEM
+maxIter = 30;   % maximal number of iterations for VBEM
 vbe_maxIter = 20;   % maximal number of iteration for VBE-step
 wordNum = 12000;    % just based on dictionary statistic information
 traindata = loadreview(trainfile, wordNum);  % load review text data
@@ -28,14 +33,16 @@ traindata = loadreview(trainfile, wordNum);  % load review text data
 global model;
 model.K = 20;   % topic dimension
 model.alpha = repmat(1/model.K, 1, model.K);
-model.beta = repmat(1/wordNum, model.K, wordNum);   % model word-topic paras
-model.eta = repmat(1/model.K, model.K+1, 1);  % new parameter relative to LDA
-model.sigma = 1;   
+%model.beta = repmat(1/wordNum, model.K, wordNum);   % model word-topic paras
+model.beta = normalize(rand(model.K, wordNum),2);
+model.eta = repmat(0.0, model.K+1, 1);  % new parameter relative to LDA
+model.sigma = var(traindata.rate);  % use real ratings' variance  
 for i=1:traindata.docnum,
     % variational parameter
     model.gammas(i,:) = model.alpha ...
         + repmat(traindata.doc(i).docwordnum/model.K, 1, model.K);
 end
+
 
 % (2)-------------------------------------------
 % For each document, do variational EM inference
@@ -56,39 +63,37 @@ betas = repmat(1/model.K, wordNum, model.K);
 E_A = repmat(0.0, traindata.docnum, model.K+1);
 E_AA = repmat(0.0, model.K+1, model.K+1);
 
-% memory allocation in advance
-global npara_part1;
-global npara_part2;
-npara_part1 = repmat(0.0, wordNum, 1);
-npara_part2 = repmat(0.0, wordNum, 1);
-
 wfd = fopen(resultfile, 'w');
 % training iteration starts
 for iter=1:maxIter,
+    corp_llhood = 0;
     fprintf(1, 'Current number of the iteration: %d\n', iter);
     fprintf(wfd, 'Current number of the iteration: %d\n', iter);
     
     for i=1:traindata.docnum,
-        [E_A(i,:), E_AA] = vbe_step(traindata.doc(i), wordNum, ...
-            E_AA, vbe_maxIter);    
-        accum_para(traindata.doc(i), wordNum);
+        [E_A(i,:), E_AA, doc_llhood] = vbe_step(traindata.doc(i)...
+            , wordNum, E_AA, vbe_maxIter);
+        corp_llhood = corp_llhood + doc_llhood;
+        accum_beta(traindata.doc(i), wordNum);
         betas(:,:) = 1/model.K;
     end
-
+    
     % variational bayesian M-step
     % ===========================
     vbm_step(traindata, E_A, E_AA);
 
     % compute train data log-likelihood
     % =================================
-    [llhood, perword_llhood]= getllhood(traindata);
-    fprintf(1, 'Corpus log-likelihood         = %f\n', llhood);
+    %[corp_llhood, perword_llhood]= getcorpllhood(traindata, 'eval');
+    perword_llhood = corp_llhood/traindata.totalwords;
+    fprintf(1, 'Corpus log-likelihood         = %f\n', corp_llhood);
     fprintf(1, 'Per-word log-likelihood       = %f\n', perword_llhood);
     fprintf(1, 'Up to now the total time cost = %f\n', toc);        
-    fprintf(wfd, 'Corpus log-likelihood         = %f\n', llhood);
+    fprintf(wfd, 'Corpus log-likelihood         = %f\n', corp_llhood);
     fprintf(wfd, 'Per-word log-likelihood       = %f\n', perword_llhood);
     fprintf(wfd, 'Up to now the total time cost = %f\n', toc);        
-    
+    model.eta'
+    model.sigma
     % clear
     E_A(:,:) = 0.0;
     E_AA(:,:) = 0.0;
@@ -107,7 +112,8 @@ pre_rate = repmat(0.0, 1, testdata.docnum);
 for i=1:testdata.docnum,
     [betas, temp1, temp2] = vbe_step(testdata.doc(i), wordNum);
     aver_beta = sum(diag(testdata.doc(i).word)...
-        *betas(testdata.doc(i).word_id, :), 1)./testdata.doc(i).docwordnum;
+        *betas(testdata.doc(i).word_id, :), testdata.doc(i).docwordnum)...
+        ./testdata.doc(i).docwordnum;
     pre_rate(i) = [aver_beta, 1] * model.eta;
 end
 
