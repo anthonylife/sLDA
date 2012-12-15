@@ -16,6 +16,7 @@
 % Global variable and model hyperparameters setting
 % =================================================
 % debug variable
+if 0,
 global doc_llhood;
 
 rand('state', sum(100*clock));
@@ -24,7 +25,7 @@ trainfile = '../datasets/train_review.dat';
 testfile = '../datasets/test_review.dat';
 resultfile = '../results/result.slda.txt';
 
-maxIter = 30;   % maximal number of iterations for VBEM
+maxIter = 20;   % maximal number of iterations for VBEM
 vbe_maxIter = 20;   % maximal number of iteration for VBE-step
 wordNum = 12000;    % just based on dictionary statistic information
 traindata = loadreview(trainfile, wordNum);  % load review text data
@@ -75,13 +76,12 @@ for iter=1:maxIter,
             , wordNum, E_AA, vbe_maxIter);
         corp_llhood = corp_llhood + doc_llhood;
         accum_beta(traindata.doc(i), wordNum);
-        betas(:,:) = 1/model.K;
     end
     
     % variational bayesian M-step
     % ===========================
     vbm_step(traindata, E_A, E_AA);
-
+    
     % compute train data log-likelihood
     % =================================
     %[corp_llhood, perword_llhood]= getcorpllhood(traindata, 'eval');
@@ -99,21 +99,28 @@ for iter=1:maxIter,
     E_AA(:,:) = 0.0;
     model.betas(:,:) = 0;
 end
-wfd.close();
+fclose(wfd);
+end
 
 % (3)------------------------------
 % Rating Prediction on the test set
 % =================================
 fprintf(1, 'Evaluation the prediction results on test data\n');
 
+% smooth the words in the test set while not occur in training set
+smooth_beta();  
+
 testdata = loadreview(testfile, wordNum);
 pre_rate = repmat(0.0, 1, testdata.docnum);
 
 for i=1:testdata.docnum,
-    [betas, temp1, temp2] = vbe_step(testdata.doc(i), wordNum);
+    %{
+    [temp0, temp1, temp2] = vbe_step(testdata.doc(i), wordNum);
     aver_beta = sum(diag(testdata.doc(i).word)...
-        *betas(testdata.doc(i).word_id, :), testdata.doc(i).docwordnum)...
+        *betas(testdata.doc(i).word_id, :), 1)...
         ./testdata.doc(i).docwordnum;
+    %}
+    aver_beta = rand(1,20);
     pre_rate(i) = [aver_beta, 1] * model.eta;
 end
 

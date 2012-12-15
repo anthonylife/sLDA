@@ -1,0 +1,18 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+accum_para	accum_beta.m	/^function accum_para(doc, wordNum)$/;"	f
+converged	converged.m	/^function tag = converged(vec1, vec2, threshold)$/;"	f
+getcorpllhood	getcorpllhood.m	/^function [corp_llhood, perword_llhood]= getcorpllhood(docs, choice)$/;"	f
+getdocllhood	getdocllhood.m	/^function doc_llhood = getdocllhood(doc, choice)$/;"	f
+init_beta	init_beta.m	/^function beta = init_beta()$/;"	f
+loadreview	loadreview.m	/^function corp = loadreview(trainfile, dicwordnum)$/;"	f
+loggamma	loggamma.m	/^function result = loggamma(in_val)$/;"	f
+newton_alpha	newton_alpha.m	/^function alpha = newton_alpha (gammas,maxiter,ini_alpha)$/;"	f
+normalize	normalize.m	/^function nm_para = normalize(para, d)$/;"	f
+smooth_beta	smooth_beta.m	/^function smooth_beta()$/;"	f
+vbe_step	vbe_step.m	/^function [E_Ai, E_AA, doc_llhood] = vbe_step(doc, dicwordnum, E_AA, vbe_maxIter)$/;"	f
+vbm_step	vbm_step.m	/^function vbm_step(docs, E_A, E_AA)$/;"	f

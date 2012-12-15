@@ -1,1 +1,80 @@
 Current number of the iteration: 1
+Corpus log-likelihood         = -6244511.981461
+Per-word log-likelihood       = -11.307237
+Up to now the total time cost = 55.197548
+Current number of the iteration: 2
+Corpus log-likelihood         = -52639778.060781
+Per-word log-likelihood       = -95.317366
+Up to now the total time cost = 110.337635
+Current number of the iteration: 3
+Corpus log-likelihood         = -88387382.269595
+Per-word log-likelihood       = -160.047265
+Up to now the total time cost = 165.065600
+Current number of the iteration: 4
+Corpus log-likelihood         = -83650001.401636
+Per-word log-likelihood       = -151.469062
+Up to now the total time cost = 220.222873
+Current number of the iteration: 5
+Corpus log-likelihood         = -83286787.559446
+Per-word log-likelihood       = -150.811374
+Up to now the total time cost = 276.908371
+Current number of the iteration: 6
+Corpus log-likelihood         = -86010364.584481
+Per-word log-likelihood       = -155.743085
+Up to now the total time cost = 332.679692
+Current number of the iteration: 7
+Corpus log-likelihood         = -89217008.871647
+Per-word log-likelihood       = -161.549509
+Up to now the total time cost = 388.763667
+Current number of the iteration: 8
+Corpus log-likelihood         = -92440484.182360
+Per-word log-likelihood       = -167.386410
+Up to now the total time cost = 443.573873
+Current number of the iteration: 9
+Corpus log-likelihood         = -95423060.951205
+Per-word log-likelihood       = -172.787105
+Up to now the total time cost = 500.076146
+Current number of the iteration: 10
+Corpus log-likelihood         = -98063069.692357
+Per-word log-likelihood       = -177.567495
+Up to now the total time cost = 554.814526
+Current number of the iteration: 11
+Corpus log-likelihood         = -100276429.532885
+Per-word log-likelihood       = -181.575332
+Up to now the total time cost = 609.552898
+Current number of the iteration: 12
+Corpus log-likelihood         = -102303269.032874
+Per-word log-likelihood       = -185.245427
+Up to now the total time cost = 664.298289
+Current number of the iteration: 13
+Corpus log-likelihood         = -104034972.745939
+Per-word log-likelihood       = -188.381106
+Up to now the total time cost = 719.225364
+Current number of the iteration: 14
+Corpus log-likelihood         = -105524814.072990
+Per-word log-likelihood       = -191.078833
+Up to now the total time cost = 774.273900
+Current number of the iteration: 15
+Corpus log-likelihood         = -106761228.781632
+Per-word log-likelihood       = -193.317668
+Up to now the total time cost = 829.832536
+Current number of the iteration: 16
+Corpus log-likelihood         = -107791522.317080
+Per-word log-likelihood       = -195.183270
+Up to now the total time cost = 884.851499
+Current number of the iteration: 17
+Corpus log-likelihood         = -108693995.069647
+Per-word log-likelihood       = -196.817421
+Up to now the total time cost = 940.320332
+Current number of the iteration: 18
+Corpus log-likelihood         = -109381653.344827
+Per-word log-likelihood       = -198.062596
+Up to now the total time cost = 995.749359
+Current number of the iteration: 19
+Corpus log-likelihood         = -109919717.088636
+Per-word log-likelihood       = -199.036894
+Up to now the total time cost = 1051.362261
+Current number of the iteration: 20
+Corpus log-likelihood         = -110401269.227454
+Per-word log-likelihood       = -199.908864
+Up to now the total time cost = 1107.065455

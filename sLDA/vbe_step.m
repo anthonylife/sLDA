@@ -32,11 +32,10 @@ docIdx = doc.id;
 betas(:,:) = 1/model.K;
 model.gammas(docIdx,:) = model.alpha ...
     + repmat(doc.docwordnum/model.K, 1, model.K);
-
 for i=1:vbe_maxIter,
     % The influence of new parameters on updating beta
-    doc_llhood = getdocllhood(doc, 'train');
-    fprintf('document %d, likelihood: %f\n', doc.id, doc_llhood);
+    %doc_llhood = getdocllhood(doc, 'train');
+    %fprintf('document %d, likelihood: %f\n', doc.id, doc_llhood);
     
     npara_part1 = repmat(doc.rate/(doc.docwordnum*model.sigma)*...
         model.eta(1:end-1)' - model.eta(1:end-1)'.*model.eta(1:end-1)'...
@@ -45,22 +44,21 @@ for i=1:vbe_maxIter,
     npara_part2 = 2*(repmat(sum(diag(doc.word)*betas(doc.word_id,:),1),length(doc.word_id),1)...
         - diag(doc.word)*betas(doc.word_id,:)) * model.eta(1:end-1)...
         * model.eta(1:end-1)' / (2*doc.docwordnum^2*model.sigma);
-
+    
     betas(doc.word_id,:) = normalize(model.beta(:,doc.word_id)'...
         *diag(exp(psi(model.gammas(docIdx,:))))...
         .*exp(npara_part1 - npara_part2), 2);
     
-    gammas = model.alpha + sum(diag(doc.word)*betas(doc.word_id,:), 1);
-    
-    if i>1 && converged(model.gammas(docIdx,:), gammas, 1.0e-3),
+    gammas = model.alpha + doc.word*betas(doc.word_id,:);
+    if i> 1 && converged(model.gammas(docIdx,:), gammas, 1.0e-3),
         model.gammas(docIdx,:) = gammas;
         break;
     end
     model.gammas(docIdx,:) = gammas;
 
-    doc_llhood = getdocllhood(doc, 'train');
-    fprintf('document %d, likelihood: %f\n', doc.id, doc_llhood);
-    pause;
+    %doc_llhood = getdocllhood(doc, 'train');
+    %fprintf('document %d, likelihood: %f\n', doc.id, doc_llhood);
+    %pause;
 end
 
 doc_llhood = getdocllhood(doc, 'train');

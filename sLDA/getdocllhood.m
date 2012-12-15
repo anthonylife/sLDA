@@ -32,7 +32,7 @@ if isnan(doc_llhood)
     end
     pause;
 end
-doc_llhood
+%doc_llhood
 % for the response variable in sLDA
 doc_llhood = doc_llhood - 1/2*log(2*pi*model.sigma)...
     -doc.rate^2/(2*model.sigma);
