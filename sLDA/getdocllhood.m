@@ -24,12 +24,12 @@ if isnan(doc_llhood)
     -loggamma(sum(model.gammas(doc_id,:))) + sum(loggamma(model.gammas(doc_id,:)))
     sum((model.gammas(doc_id,:)-1).*digamma_diff)
     -sum(betas(doc.word_id,:).*log(betas(doc.word_id,:)), 2)'* doc.word'
-    for j=doc.word_id
-        sum(betas(j,:))
-        log(betas(j,:))
-        find(betas(j,:)==0)
-        pause;
-    end
+    %for j=doc.word_id
+    %    sum(betas(j,:))
+    %    log(betas(j,:))
+    %    find(betas(j,:)==0)
+    %    pause;
+    %end
     pause;
 end
 %doc_llhood

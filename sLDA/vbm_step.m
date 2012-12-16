@@ -17,6 +17,10 @@ global model;
 % update beta
 model.beta = normalize(model.betas', 2); 
 
+% smooth the words in the test set while not occur in training set
+% and avoid 'NaN' value
+smooth_para('beta');
+
 % Newton method to update alpah
 model.alpha = newton_alpha(model.gammas);
 

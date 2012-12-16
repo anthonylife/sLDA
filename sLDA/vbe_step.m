@@ -32,6 +32,7 @@ docIdx = doc.id;
 betas(:,:) = 1/model.K;
 model.gammas(docIdx,:) = model.alpha ...
     + repmat(doc.docwordnum/model.K, 1, model.K);
+
 for i=1:vbe_maxIter,
     % The influence of new parameters on updating beta
     %doc_llhood = getdocllhood(doc, 'train');
@@ -49,6 +50,8 @@ for i=1:vbe_maxIter,
         *diag(exp(psi(model.gammas(docIdx,:))))...
         .*exp(npara_part1 - npara_part2), 2);
     
+    smooth_para('betas', doc.word_id);
+
     gammas = model.alpha + doc.word*betas(doc.word_id,:);
     if i> 1 && converged(model.gammas(docIdx,:), gammas, 1.0e-3),
         model.gammas(docIdx,:) = gammas;

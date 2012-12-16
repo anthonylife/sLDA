@@ -1,0 +1,251 @@
+lda, a Latent Dirichlet Allocation package.
+
+Daichi Mochihashi
+ATR Spoken Language Communication Research Laboratories, Kyoto, Japan
+$Id: index.html,v 1.3 2004/12/04 12:47:35 daiti-m Exp $
+
+Overview
+
+lda is a Latent Dirichlet Allocation (Blei et al., 2001) package written both
+in MATLAB and C (command line interface).
+This package provides only a standard variational Bayes estimation that is
+first proposed, but has a simple textual data format that is almost the same as
+SVMlight or TinySVM.
+This package can be used as an aid to understand LDA, or simply as a
+regularized alternative to PLSI, which has a severe overfitting problem due to
+its maximum likelihood structure.
+For advanced users who wish to benefit from the latest result, consider using 
+npbayes or MPCA: though, they have non-trivial data structures.
+
+Requirements
+
+C version:
+     * ANSI C compiler.
+       Systems below are confirmed to compile.
+         - Linux 2.4.20, Redhat 9, gcc 3.2.2
+         - Linux 2.6.5, Fedora core release 2, gcc 3.3.3
+         - FreeBSD 4.8-STABLE, gcc 2.95.4 (GNU make)
+         - SunOS 5.8, gcc 2.95.3 (GNU make)
+MATLAB version:
+     * A MATLAB environment. Statistical Toolbox may be needed for psi()
+       function (but in case it is not installed, consider using Minka's 
+       Lightspeed MATLAB toolbox).
+     * Octave is not supported.
+
+Install
+
+C version
+     1. Take a glance at Makefile; and type make.
+     2. C version is not intended to be used by those who are not familiar
+        with C.
+        Makefile and source files are very simple, so you can modify it as
+        needed if it does not compile (If severe problems are found, please
+        contact to the author.)
+MATLAB version
+    simply add a directory where you have unpacked *.m into MATLAB path. 
+    For example:
+    % cd ~/work
+    % tar xvfz lda-0.1-matlab.tar.gz
+    % cd lda-0.1-matlab/
+    % matlab
+    >> addpath ~/work/lda-0.1-matlab
+
+Download
+
+ * C version: lda-0.1.tar.gz
+ * MATLAB version: lda-0.1-matlab.tar.gz
+
+Performance
+
+ * C version runs about 8 times or more faster than MATLAB (while MATLAB codes
+   are fully vectorized).
+ * However, MATLAB version is closed under MATLAB environment; so it is easy
+   to investigate and manipulate the parameters (especially graphically using
+   plot or surf).
+   Moreover, MATLAB codes are so simple and easy to understand.
+ * To estimate the parameters of 50 class LDA decomposition of the standard 
+   Cranfield collection (1397 documents, 5177 unique terms),
+     - C version took 1 minute 32 seconds,
+     - MATLAB version took 38 minutes 55 seconds,
+   on a Xeon 2.8GHz.
+   It runs in low memory efficiently: in the experiment above, it uses only
+   6.8MB (C) and 29MB (MATLAB) of memory.
+
+Getting Started
+
+This package contains a sample data file "train" which was compiled from the
+first 100 documents of the Cranfield collection.
+Each feature id corresponds to the respective line of file "train.lex"; that
+is, feature 20 means a word "accuracy", feature 21 means "accurate", and so on.
+After compilation, you can test it using "train" data as follows.
+
+C version:
+    % lda -N 20 train model
+MATLAB version:
+    % matlab
+    >> [alpha,beta] = ldamain('train',20);
+
+C version creates two files "model.alpha" and "model.beta"; MATLAB version
+creates 1x20-dimensional vector alpha and 1324x20-dimensional matrix beta.
+Parameters of the resulting models are explained in the sections below.
+
+Data Format
+
+Data format is common to both C and MATLAB version and almost the same as
+widely-used SVMlight, except that there is no label in Latent Dirichlet
+Allocation since LDA is an unsupervised method.
+
+A data file is a ASCII text file, where each line represents a document (NB.
+document is simply a synonym for "a group of data"; So you can interpret it as
+you like whenever it means a group of data.)
+Typical data file is as follows:
+
+    1:1 2:4 5:2
+    1:2 3:3 5:1 6:1 7:1
+    2:4 5:1 7:1
+    
+
+ * Each line can be maximum 65535 bytes (about 820 lines in 80-column text) by
+   default. For a standard document this value is sufficient, but if you wish
+   to increase this limit, modify BUFSIZE in feature.c as you like.
+ * Each line consists of pairs of <feature_id>:<count>. Here, feature_id is an
+   integer from 1 (this is the same as SVMlight); count can be an integer or a
+   real number that must be positive.
+ * <feature_id>:<count> pairs are separated by (possibly multiple) white
+   spaces. The program is coded to work even if there are any empty lines, but
+   it is preferable that there are no such unnecessary lines.
+ * For a complete specification, please refer to SVMlight's page.
+
+Command Line Syntax
+
+C version
+
+lda is typically invoked simply as:
+
+% lda -N 100 train model
+
+where % is a command prompt.
+train is a data file that has a format described above, and model is a basename
+of output files of model parameters. Specifically, lda uses two outputs:
+model.alpha and model.beta that represent \alpha and \beta in the LDA described
+in (Blei et al., 2001); that is, \alpha is the parameter of prior Dirichlet
+distribution over the latent classes, and \beta is the set of class unigrams
+for each latent class.
+-N 100 is the number of latent classes to assume in the data. For the standard
+model of LDA, this is the only parameter we must provide in advance. In this
+case, 100 latent classes are assumed.
+
+Besides, there are several rarely-used options:
+
+% lda -h
+lda, a Latent Dirichlet Allocation package.
+Copyright (c) 2004 Daichi Mochihashi, All rights reserved.
+usage: lda -N classes [-I emmax -D demmax -E epsilon] train model
+
+-I emmax
+    Maximum # of iteration of the outer VB-EM algorithm, which is exited when
+    converged. (default 100)
+-D demmax
+    Maximum # of iteration of the inner VB-EM algorithm for each document,
+    which is exited when converged. (default 20)
+-E epsilon
+    A threshold to determine the whole convergence of the estimation. It is a
+    lower threshold of the relative increase in the total data likelihood.
+    (default 0.0001)
+-h
+    displays help.
+
+MATLAB version
+
+First, you must load a data file into MATLAB data structure:
+
+% matlab
+>> d = fmatrix('train');
+
+And run a function lda to estimate the parameters. The second argument is the
+number of latent classes that you assume. (in the example below, 20)
+
+>> help lda
+  Latent Dirichlet Allocation, standard model.
+  Copyright (c) 2004 Daichi Mochihashi, all rights reserved.
+  $Id: index.html,v 1.3 2004/12/04 12:47:35 daiti-m Exp $
+  [alpha,beta] = lda(d,k,[emmax,demmax])
+  d      : data of documents
+  k      : # of classes to assume
+  emmax  : # of maximum VB-EM iteration (default 100)
+  demmax : # of maximum VB-EM iteration for a document (default 20)
+>> [alpha,beta] = lda(d,20);
+
+Optional two parameters emmax and demmax can be fed into lda, which has the
+same meaning as the C version.
+If you find that loading text data into MATLAB structure in advance is
+troublesome, there is a wrapper function ldamain that works exactly the same as
+the C version:
+
+>> [alpha,beta] = ldamain('train.dat',20);
+
+Output Format
+
+MATLAB version
+
+In the example above, alpha is a N-dimensional row vector of \alpha for
+corresponding latent topics, and beta is a [V,N]-dimensional matrix of \beta
+where beta(v,n) = p(v|n) (n = 1 .. N, v = 1 .. V; V is the size of the
+lexicon).
+You can save them to file using standard MATLAB function save, for example, as:
+
+>> [alpha,beta] = ldamain('train.dat',20);
+number of latent classes = 20
+number of documents      = 100
+number of words          = 1324
+iteration 26/100..      likelihood = 339.167    ETA: 0:01:03 (1 sec/step)
+converged.
+>> save('alpha.dat', 'alpha', '-ascii');
+>> save('beta.dat', 'beta', '-ascii');
+
+C version
+
+If you invoke lda as the following,
+
+% lda -N 100 train model
+
+two files "model.alpha" and "model.beta" are created.
+These two files are exactly of the same format as those which are saved from
+MATLAB: "model.alpha" is a space-separated N-dimensional vector of \alpha, and
+"model.beta" is a space-separated V x N matrix of \beta.
+These parameters can be loaded into MATLAB using standard ways:
+
+>> beta = load('model.beta');
+
+And you can manipulate these parameters within MATLAB.
+
+References
+
+ 1. David M. Blei, Andrew Y. Ng, and Michael I. Jordan. Latent Dirichlet
+    Allocation. Neural Information Processing Systems 14, 2001. [citeseer]
+ 2. David M. Blei, Andrew Y. Ng and Michael I. Jordan. Latent Dirichlet
+    Allocation. Journal of Machine Learning Research, vol. 3, pp.993--1022,
+    2003. [citeseer]
+ 3. Daichi Mochihashi. A note on a Variational Bayes derivation of full
+    Bayesian Latent Dirichlet Allocation. unpublished manuscript, 2004. [PDF]
+
+Acknowledgements
+
+Digamma and trigamma codes are by Thomas Minka. (url)
+Thanks for Taku Kudo for his plsi tool that has been a good reference for the
+development of lda.
+
+Note
+
+Almost at the same time(!), Blei himself made LDA-C package written in C
+to the public.
+According to some experiments, our package runs about 4 to 10 times as fast
+as his (this may be due to reusing preallocated buffers in VB-EM), and 
+also provides a MATLAB version for easy experimentation.
+Of course, the package by the original author is more desirable, so I wish 
+both ones are equally useful.
+
+------------------------------------------------------------------------------
+
+daichi.mochihashi <at> atr.jp
+Last modified: Thu Jun 9 16:05:39 2005

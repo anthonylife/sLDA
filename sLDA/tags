@@ -13,6 +13,6 @@ loadreview	loadreview.m	/^function corp = loadreview(trainfile, dicwordnum)$/;"	
 loggamma	loggamma.m	/^function result = loggamma(in_val)$/;"	f
 newton_alpha	newton_alpha.m	/^function alpha = newton_alpha (gammas,maxiter,ini_alpha)$/;"	f
 normalize	normalize.m	/^function nm_para = normalize(para, d)$/;"	f
-smooth_beta	smooth_beta.m	/^function smooth_beta()$/;"	f
+smooth_para	smooth_para.m	/^function smooth_para(choice, smooth_val)$/;"	f
 vbe_step	vbe_step.m	/^function [E_Ai, E_AA, doc_llhood] = vbe_step(doc, dicwordnum, E_AA, vbe_maxIter)$/;"	f
 vbm_step	vbm_step.m	/^function vbm_step(docs, E_A, E_AA)$/;"	f

@@ -1,0 +1,20 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+accum_beta	accum_beta.m	/^function betas = accum_beta(betas,q,t)$/;"	f
+assert	assert.m	/^function assert(b)$/;"	f
+converged	converged.m	/^function b = converged(u,udash,threshhold)$/;"	f
+diff_vec	diff_vec.m	/^function p = diff_vec(u,v)$/;"	f
+features	features.m	/^function n = features(m)$/;"	f
+fmatrix	fmatrix.m	/^function m = fmatrix(file,offset)$/;"	f
+isint	isint.m	/^function b = isint(n)$/;"	f
+lda_lik	lda_lik.m	/^function lik = lda_lik(d,beta,gammas)$/;"	f
+ldamain	ldamain.m	/^function [alpha,beta] = ldamain(train,k,emmax,demmax)$/;"	f
+mnormalize	mnormalize.m	/^function x = mnormalize(m,d)$/;"	f
+newton_alpha	newton_alpha.m	/^function alpha = newton_alpha (gammas,maxiter,ini_alpha)$/;"	f
+normalize	normalize.m	/^function x = normalize(v)$/;"	f
+rtime	rtime.m	/^function s = rtime(t)$/;"	f
+vbem	vbem.m	/^function [alpha,q] = vbem(d,beta,alpha0,emmax)$/;"	f
