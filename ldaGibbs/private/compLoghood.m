@@ -10,9 +10,3 @@ for i=1:Corp.nw
     loghood = loghood + Corp.X(:,i)'*log(Pd_z*diag(Pz)*Pw_z(i,:)');
 end
 
-% Following way will speed the program. However, it will generate a
-%   an intermediate huge matrix, with the size of w(word)*d(doc)
-%{
-loghood = sum(sum(Corp.X' .* log(Pw_z * diag(Pz) * Pd_z' + 1)));
-loghood = full(loghood);
-%}

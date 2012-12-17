@@ -13,6 +13,12 @@ function ldaGibbs(feature_file, topics, maxIter)
 %  @author:anthonylife
 %  @date:11/2/2012
 
+%------Debug-------
+%feature_file = '../features/review_features.lda.gibbs.mat';
+%maxIter = 100;
+%topics = 20;
+%------------------
+
 
 %clear all;
 rand('state',sum(100*clock));
@@ -45,6 +51,7 @@ Corp.N = 0;
 % ===============================
 Corp.triple = load(Corp.featurefile);
 Corp.X = spconvert(Corp.triple);
+Corp.totalwordnum = sum(Corp.triple(:,3));
 Corp.nd = size(Corp.X, 1);
 Corp.nw = size(Corp.X, 2);
 N = size(Corp.triple, 1);
@@ -55,11 +62,13 @@ for i=1:N,
         W(Corp.N) = Corp.triple(i,2);
     end
 end
-
+% get id list to use in 
+getidlist();
+Corp.doc(1).wordid;
 
 % Setting doc-topic matrix and topic-word matrix
 % ==============================================
-global Pz; global Pd_z; global Pw_z;
+global Pz; global Pd_z; global Pw_z; global Pz_d;
 global dt_mat; global tw_mat;
 dt_mat = repmat(0, Corp.nd, Model.T);
 tw_mat = repmat(0, Model.T, Corp.nw);
@@ -75,6 +84,7 @@ for i=1:Corp.N,
 end
 Nt = sum(dt_mat, 1);
 
+getidlist();
 
 % 4-----------------------
 % Iterative gibbs Sampling
@@ -103,12 +113,18 @@ for i=1:Model.maxIter,
         Nt(t) = Nt(t) + 1;
     end
     Pz = sum(dt_mat, 1)'/Corp.N;
+    dt_mat = dt_mat + Model.alpha;
+    tw_mat = tw_mat + Model.beta;
     Pd_z = dt_mat * diag(1./sum(dt_mat, 1));
+    Pz_d = diag(1./sum(dt_mat, 2)) * dt_mat;
     Pw_z = tw_mat' * diag(1./sum(tw_mat, 2));
-    fprintf('Calculate likelihood and perplexity...\n');
-    loghood = compLoghood();
-    perplex = compPerplex(loghood);
-    fprintf('Current iteration number: %d; Loglikelihood: %f; Perplexity: %f...\n', i, loghood, perplex);
+    
+    fprintf('Calculate likelihood...\n');
+    [logllhood, perwd_lik] = lda_lik();
+    fprintf('Current iteration number: %d; Loglikelihood: %f, ', i, logllhood); 
+    perplexity = compPerplex(logllhood);
+    fprintf('per-word log-likelihood: %f, perplexity: %f...\n', perwd_lik, perplexity);
+    
 end
 fprintf('Total Time Cost:\n');
 toc;
@@ -118,8 +134,9 @@ toc;
 % save model parameters
 save(Model.paraFile, 'Pz', 'Pd_z', 'Pw_z');
 % save features
-tr_fea = Pd_z(1:Corp.nd/2, :);
-te_fea = Pd_z(Corp.nd/2+1:end, :);
+Pz_d = diag(1./sum(dt_mat, 2)) * dt_mat;
+tr_fea = Pz_d(1:Corp.nd/2, :);
+te_fea = Pz_d(Corp.nd/2+1:end, :);
 save(Corp.genFeaturesFile, 'tr_fea', 'te_fea');
 
 fprintf('Perplexity of test data: %f...\n', perplex);
