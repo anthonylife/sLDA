@@ -1,4 +1,4 @@
-function m = fmatrix(file,offset)
+function [m, totalwords]= fmatrix(file,offset)
 % m = fmatrix(file,[offset])
 % constructs a cell array of struct of (id, cnt) array.
 % file   : file of feature data
@@ -21,6 +21,7 @@ end
 m = {};
 j = 0;
 % read file
+totalwords = 0;
 while ~feof(fid)
     l = fgetl(fid);
     
@@ -46,6 +47,7 @@ while ~feof(fid)
     for i = 1:n
         d.id(i)  = f(2*i-1) + offset;
         d.cnt(i) = f(2*i);
+        totalwords = totalwords + d.cnt(i);
     end
     j = j + 1;
     m{j} = d;

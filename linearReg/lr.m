@@ -1,4 +1,4 @@
-function lr(feature_file, topics, fea_type)
+function lr(feature_file, topics)
 % LR is an implementation of linear regression model with L2
 % regularization. As the total number of the train features 
 % is small, I just solve the parameters by setting their 
@@ -53,7 +53,10 @@ model.W = inv(model.reg_para*eye(fea_dim+1)+tr_fea'*tr_fea)...
 % (3)-------
 % Evaluation
 % ==========
+%model.W
 pre_rate = model.W' * te_fea';
+%pre_rate(1:100)
 eval_result = predictiveR2(te_rate(:,2)', pre_rate);
+fprintf(1,'==================================================\n');
 fprintf(1, 'The result of predictive R2 for linear regression');
 fprintf(1, 'with LDA topic features is %f\n', eval_result);

@@ -1,0 +1,25 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+bi_item	gen_tfidf.py	/^            bi_item = item.split(':')$/;"	v
+data_file	gen_tfidf.py	/^data_file = ['..\/datasets\/train_review.dat', '..\/datasets\/test_review.dat']$/;"	v
+doc	gen_tfidf.py	/^        doc = [0.0 for i in range(total_wordnum)]$/;"	v
+doc	gen_tfidf.py	/^        doc = map(lambda x: float(x)\/maxwordcnt, doc)$/;"	v
+docs	gen_tfidf.py	/^docs = []               # tf-idf value in each document$/;"	v
+feature_file	gen_tfidf.py	/^feature_file = '..\/features\/review_features.tf-idf.txt'$/;"	v
+lr	lr.m	/^function lr(feature_file, topics)$/;"	f
+lrsgd	lrsgd.m	/^function lrsgd(feature_file, topics)$/;"	f
+math	gen_tfidf.py	/^import math$/;"	i
+maxwordcnt	gen_tfidf.py	/^                maxwordcnt = temp_cnt$/;"	v
+maxwordcnt	gen_tfidf.py	/^        maxwordcnt = 0$/;"	v
+res	gen_tfidf.py	/^        res = line.strip('\\n').split(' ')$/;"	v
+skip_header	gen_tfidf.py	/^skip_header = 2$/;"	v
+temp_cnt	gen_tfidf.py	/^            temp_cnt = int(bi_item[1])$/;"	v
+temp_id	gen_tfidf.py	/^            temp_id = int(bi_item[0]) - 1$/;"	v
+total_docnum	gen_tfidf.py	/^total_docnum = 5000$/;"	v
+total_wordnum	gen_tfidf.py	/^total_wordnum = 12000$/;"	v
+wd_doc	gen_tfidf.py	/^wd_doc = {}             # word belongs how many documents$/;"	v
+wfd	gen_tfidf.py	/^wfd = open(feature_file, 'w')$/;"	v

@@ -13,8 +13,9 @@
 % Date: 12/15/2012
 
 choice = 'tr_tst';
-infer_method = 'gibbs';
-%infer_method = 'variation';
+%method = 'gibbs';
+method = 'variation';
+%method = 'tf-idf';
 
 if choice == 'tr_tst',
     switch method,
@@ -23,6 +24,8 @@ if choice == 'tr_tst',
         gibbs_maxiter = 500;
         feature_file = '../features/review_features.lda.gibbs.mat';
         ldaGibbs(feature_file, topics, gibbs_maxiter);
+        % Linear regression using least squre method
+        lr(feature_file, topics);
     
     case 'variation',
         topics = 20;
@@ -30,14 +33,17 @@ if choice == 'tr_tst',
         dem_maxiter = 20;
         feature_file = '../features/review_features.lda.vari.mat';
         ldaVariation(feature_file, topics, em_maxiter, dem_maxiter);
+        % Linear regression using least squre method
+        lr(feature_file, topics);
     
     case 'tf-idf',
         topics = 12000; % count of total unique words
         feature_file = '../features/review_features.tf-idf.txt';
+        % Linear regression using stochastic gradient descent
+        lrsgd(topics, feature_file);
+    
     otherwise,
         error('Invalid method choice.');
     end
 end
 
-% Linear regression.
-lr(feature_file, topics, 'nontopic');

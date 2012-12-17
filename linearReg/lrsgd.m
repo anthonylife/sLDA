@@ -1,4 +1,4 @@
-%function lrsgd(feature_file, topics)
+function lrsgd(feature_file, topics)
 %
 % LRSGD is an implementation of linear regression using
 % stochastic gradient descent (SGD) algorithm to train
@@ -9,8 +9,8 @@
 
 
 %----Debug------
-topics = 12000; % count of total unique words
-feature_file = '../features/review_features.tf-idf.txt';
+%topics = 12000; % count of total unique words
+%feature_file = '../features/review_features.tf-idf.txt';
 %---------------
 
 % (1)-----------
