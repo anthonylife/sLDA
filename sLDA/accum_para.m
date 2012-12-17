@@ -14,5 +14,4 @@ global model;
 global betas;
 
 betas(doc.word_id,:) = diag(doc.word)*betas(doc.word_id,:);
-betas(setdiff([1:wordNum], doc.word_id),:) = 0;
-model.betas = model.betas + betas;
+model.betas(doc.word_id,:) = model.betas(doc.word_id,:) + betas(doc.word_id,:);

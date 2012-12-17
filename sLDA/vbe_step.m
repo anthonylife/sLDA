@@ -1,4 +1,4 @@
-function [E_Ai, E_AA, doc_llhood] = vbe_step(doc, dicwordnum, E_AA, vbe_maxIter)
+function [E_Ai, E_AA] = vbe_step(doc, dicwordnum, E_AA, vbe_maxIter)
 %
 %   VBE_STEP achieves the E-step of variational bayesian EM
 %   inference method.
@@ -13,7 +13,6 @@ function [E_Ai, E_AA, doc_llhood] = vbe_step(doc, dicwordnum, E_AA, vbe_maxIter)
 %   Output variable:
 %       E_Ai --> Expectation of A which used for optimizing elta and sigma
 %       E_AA --> Similar as the previous one
-%       doc_llhood --> the likelihood of document
 %
 %   Date: 12/12/2012
 %
@@ -50,21 +49,16 @@ for i=1:vbe_maxIter,
         *diag(exp(psi(model.gammas(docIdx,:))))...
         .*exp(npara_part1 - npara_part2), 2);
     
-    smooth_para('betas', doc.word_id);
+    %smooth_para('betas', doc.word_id);
 
     gammas = model.alpha + doc.word*betas(doc.word_id,:);
-    if i> 1 && converged(model.gammas(docIdx,:), gammas, 1.0e-3),
+    if i> 1 && converged(model.gammas(docIdx,:), gammas, 1.0e-4),
         model.gammas(docIdx,:) = gammas;
         break;
     end
     model.gammas(docIdx,:) = gammas;
-
-    %doc_llhood = getdocllhood(doc, 'train');
-    %fprintf('document %d, likelihood: %f\n', doc.id, doc_llhood);
-    %pause;
 end
 
-doc_llhood = getdocllhood(doc, 'train');
 
 if nargin > 2,
     betas_sum = sum(diag(doc.word)*betas(doc.word_id,:), 1);

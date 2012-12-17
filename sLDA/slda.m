@@ -65,14 +65,13 @@ wfd = fopen(resultfile, 'w');
 % training iteration starts
 for iter=1:maxIter,
     corp_llhood = 0;
-    fprintf(1, 'Current number of the iteration: %d\n', iter);
-    fprintf(wfd, 'Current number of the iteration: %d\n', iter);
+    fprintf(1,'iteration %d/%d...\t',iter,maxIter);
+    fprintf(wfd,'iteration %d/%d...\t',iter,maxIter);
     
     for i=1:traindata.docnum,
-        [E_A(i,:), E_AA, doc_llhood] = vbe_step(traindata.doc(i)...
+        [E_A(i,:), E_AA] = vbe_step(traindata.doc(i)...
             , wordNum, E_AA, vbe_maxIter);
-        corp_llhood = corp_llhood + doc_llhood;
-        accum_beta(traindata.doc(i), wordNum);
+        accum_para(traindata.doc(i), wordNum);
     end
     
     % variational bayesian M-step
@@ -82,13 +81,12 @@ for iter=1:maxIter,
     % compute train data log-likelihood
     % =================================
     %[corp_llhood, perword_llhood]= getcorpllhood(traindata, 'eval');
-    perword_llhood = corp_llhood/traindata.totalwords;
-    fprintf(1, 'Corpus log-likelihood         = %f\n', corp_llhood);
-    fprintf(1, 'Per-word log-likelihood       = %f\n', perword_llhood);
-    fprintf(1, 'Up to now the total time cost = %f\n', toc);        
-    fprintf(wfd, 'Corpus log-likelihood         = %f\n', corp_llhood);
-    fprintf(wfd, 'Per-word log-likelihood       = %f\n', perword_llhood);
-    fprintf(wfd, 'Up to now the total time cost = %f\n', toc);        
+    [corp_llhood, perword_llhood]= slda_lik(traindata);
+    fprintf('Corpus log-likelihood = %f, ', corp_llhood);
+    fprintf('per-word log-likelihood = %f...\t',perword_llhood);
+    elapsed = toc;
+    fprintf(1,'RTS:%s (%d sec/step)\n', ...
+	    rtime(elapsed * ( maxIter / iter  - 1)), round(elapsed / iter));
     
     % clear
     E_A(:,:) = 0.0;
@@ -96,6 +94,7 @@ for iter=1:maxIter,
     model.betas(:,:) = 0;
 end
 fclose(wfd);
+fprintf('Total time cost = %f\n', toc);
 %end
 
 % (3)------------------------------
@@ -106,13 +105,46 @@ fprintf(1, 'Evaluation the prediction results on test data\n');
 testdata = loadreview(testfile, wordNum);
 pre_rate = repmat(0.0, 1, testdata.docnum);
 
+% words occured in trian data
+dict = find(sum(model.beta, 1)~=0);
+
+% Strategy 1:
+% inference and predict
 for i=1:testdata.docnum,
-    [temp0, temp1, temp2] = vbe_step(testdata.doc(i), wordNum);
+    % Remove words not occur train data.
+    [comid, idx_src, idx_tar] = intersect(testdata.doc(i).word_id, dict);
+    testdata.doc(i).word_id = testdata.doc(i).word_id(idx_src);
+    testdata.doc(i).word = testdata.doc(i).word(idx_src);
+    
+    [temp0, temp1] = vbe_step(testdata.doc(i), wordNum);
     aver_beta = sum(diag(testdata.doc(i).word)...
         *betas(testdata.doc(i).word_id, :), 1)...
         ./testdata.doc(i).docwordnum;
     pre_rate(i) = [aver_beta, 1] * model.eta;
 end
+eval_result = predictiveR2(testdata.rate, pre_rate);
+fprintf(1, 'The result of predictive R2 for sLDA is %f\n', eval_result);
+
+% Strategy 2:
+% inference
+for i=1:testdata.docnum,
+    % Remove words not occur train data.
+    [comid, idx_src, idx_tar] = intersect(testdata.doc(i).word_id, dict);
+    testdata.doc(i).word_id = testdata.doc(i).word_id(idx_src);
+    testdata.doc(i).word = testdata.doc(i).word(idx_src);
+    
+    [temp0, temp1, temp2] = vbe_step(testdata.doc(i), wordNum);
+    accum_para(testdata.doc(i), wordNum);
+end
+
+% predict
+for i=1:testdata.docnum,
+    aver_beta = sum(diag(testdata.doc(i).word)...
+        *model.betas(testdata.doc(i).word_id, :), 1)...
+        ./testdata.doc(i).docwordnum;
+    pre_rate(i) = [aver_beta, 1] * model.eta;
+end
 
 eval_result = predictiveR2(testdata.rate, pre_rate);
+fprintf('================================================\n');
 fprintf(1, 'The result of predictive R2 for sLDA is %f\n', eval_result);

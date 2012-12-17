@@ -1,0 +1,5 @@
+Note: currently, I use betas and gammas to calculate the log-likelihood of
+      the whole corpus, which is implemented in 'slda_lik' method. Another
+      way to calculate the log-likelihood is using the lower bound of the 
+      variational bayesian representation. However, I meet some problems
+      to implement it correctly.
