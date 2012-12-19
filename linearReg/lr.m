@@ -1,4 +1,4 @@
-function lr(feature_file, topics)
+function lr(feature_file, topics, test_feature_file)
 % LR is an implementation of linear regression model with L2
 % regularization. As the total number of the train features 
 % is small, I just solve the parameters by setting their 
@@ -30,10 +30,9 @@ model.W = repmat(0.0, fea_dim+1, 1);
 if nargin < 3,
     load(feature_file);    % get 'tr_fea' and 'te_fea' 
 else,
-    fea = load(feature_file);
-    docnum = size(fea, 1);
-    tr_fea = fea(1:docnum/2, :);
-    te_fea = fea(docnum/2+1:end, :);
+    train_feature_file = feature_file;
+    tr_fea = load(train_feature_file);
+    te_fea = load(test_feature_file);
 end
 
 % read real ratings
