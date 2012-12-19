@@ -41,7 +41,7 @@ while ~feof(fid)
     
     f = sscanf(l(start_idx:end),'%d:%g',Inf);
     n = length(f) / 2;
-    assert(isint(n));
+    myassert(isint(n));
     d.id  = zeros(1,n);
     d.cnt = zeros(1,n);
     for i = 1:n

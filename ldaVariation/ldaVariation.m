@@ -76,6 +76,8 @@ for j = 1:emmax
   plik = lik;
   % ETA
 end
+elapsed = toc;
+fprintf(1, 'Total time cost:%s', rtime(elapsed));
 fprintf(1,'\n');
 
 % Extract topic features
@@ -104,7 +106,6 @@ for i = 1:n,
     [gamma, q] = vbem(d{i}, beta, alpha, demmax);   
     doc_topic = sum(diag(d{i}.cnt)*q, 1);
     te_fea(i,:) = doc_topic ./ sum(doc_topic);
-    pause;
 end
 
 % save features

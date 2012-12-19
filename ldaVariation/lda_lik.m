@@ -12,5 +12,6 @@ for i=1:length(d),
     doc = d{i};
     loglik = loglik + log(1/length(d)) ...
         + sum(doc.cnt.*log(Pz_d(i,:)*Pw_z(:, doc.id)));
+    %loglik = loglik + sum(doc.cnt.*log(Pz_d(i,:)*Pw_z(:, doc.id)));
 end
 perwd_loglik = loglik / totalwords;
