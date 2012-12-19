@@ -25,7 +25,7 @@ trainfile = '../datasets/train_review.dat';
 testfile = '../datasets/test_review.dat';
 resultfile = '../results/result.slda.txt';
 
-maxIter = 100;   % maximal number of iterations for VBEM
+maxIter = 200;   % maximal number of iterations for VBEM
 vbe_maxIter = 80;   % maximal number of iteration for VBE-step
 wordNum = 12000;    % just based on dictionary statistic information
 traindata = loadreview(trainfile, wordNum);  % load review text data
@@ -44,9 +44,9 @@ model.gammas = repmat(0.0, traindata.docnum, model.K);
 % (2)-------------------------------------------
 % For each document, do variational EM inference
 tic;
-fprintf(1, 'Number of documents = %d\n', traindata.docnum);
-fprintf(1, 'Number of words     = %d\n', wordNum);
-fprintf(1, 'Number of topics    = %d\n', model.K);
+fprintf(1, 'Number of documents      = %d\n', traindata.docnum);
+fprintf(1, 'Number of words          = %d\n', wordNum);
+fprintf(1, 'Number of latent classes = %d\n', model.K);
     
 % block coordinate-ascent variational inference
 % variational bayesian E-step
@@ -94,8 +94,10 @@ for iter=1:maxIter,
     model.betas(:,:) = 0;
 end
 fclose(wfd);
-fprintf('Total time cost = %f\n', toc);
+elapsed = toc;
+fprintf('\nTotal time cost = %s\n', rtime(elapsed));
 %end
+model.betas(:,:) = 0;
 
 % (3)------------------------------
 % Rating Prediction on the test set
@@ -107,6 +109,7 @@ pre_rate = repmat(0.0, 1, testdata.docnum);
 
 % words occured in trian data
 dict = find(sum(model.beta, 1)~=0);
+vbe_maxIter = 40;   % maximal number of iteration for VBE-step
 
 % Strategy 1:
 % inference and predict
@@ -116,26 +119,30 @@ for i=1:testdata.docnum,
     testdata.doc(i).word_id = testdata.doc(i).word_id(idx_src);
     testdata.doc(i).word = testdata.doc(i).word(idx_src);
     
-    [temp0, temp1] = vbe_step(testdata.doc(i), wordNum);
+    [temp0, temp1] = vbe_step(testdata.doc(i), wordNum, -1, vbe_maxIter);
     aver_beta = sum(diag(testdata.doc(i).word)...
         *betas(testdata.doc(i).word_id, :), 1)...
         ./testdata.doc(i).docwordnum;
     pre_rate(i) = [aver_beta, 1] * model.eta;
 end
 eval_result = predictiveR2(testdata.rate, pre_rate);
-fprintf(1, 'The result of predictive R2 for sLDA is %f\n', eval_result);
+fprintf('================================================\n');
+fprintf(1, 'The result of predictive R2 for sLDA method 1 is %f\n', eval_result);
 
 % Strategy 2:
 % inference
+%{
 for i=1:testdata.docnum,
     % Remove words not occur train data.
     [comid, idx_src, idx_tar] = intersect(testdata.doc(i).word_id, dict);
     testdata.doc(i).word_id = testdata.doc(i).word_id(idx_src);
     testdata.doc(i).word = testdata.doc(i).word(idx_src);
     
-    [temp0, temp1, temp2] = vbe_step(testdata.doc(i), wordNum);
+    [temp0, temp1] = vbe_step(testdata.doc(i), wordNum, -1, vbe_maxIter);
     accum_para(testdata.doc(i), wordNum);
 end
+
+model.betas = normalize(model.betas, 2);
 
 % predict
 for i=1:testdata.docnum,
@@ -147,4 +154,5 @@ end
 
 eval_result = predictiveR2(testdata.rate, pre_rate);
 fprintf('================================================\n');
-fprintf(1, 'The result of predictive R2 for sLDA is %f\n', eval_result);
+fprintf(1, 'The result of predictive R2 for sLDA method 2 is %f\n', eval_result);
+%}
