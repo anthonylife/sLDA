@@ -14,7 +14,8 @@
 
 choice = 'tr_tst';
 %method = 'gibbs';
-method = 'variation';
+method = 'gibbs++';
+%method = 'variation';
 %method = 'tf-idf';
 
 if choice == 'tr_tst',
@@ -27,9 +28,34 @@ if choice == 'tr_tst',
         % Linear regression using least squre method
         lr(feature_file, topics);
     
-    case 'variation',
+    case 'gibbs++',
         topics = 20;
-        em_maxiter = 100;
+        gibbs_maxiter = 1000;     % for training
+        train_data_file = '../datasets/train_review.dat';
+        test_data_file = '../datasets/test_review.dat';
+        train_feature = '../features/review_features.lda.gibbs++.theta.tr.txt';
+        test_feature = '../features/review_features.lda.gibbs++.theta.tst.txt';
+
+        % splice string to form commander of training
+        cmd = '../discLDA/src/lda -est -alpha 0.5 -beta 0.1 -ntopics ';
+        cmd = [cmd, num2str(topics), ' -niters ', num2str(gibbs_maxiter),...
+            ' -dfile ', train_data_file];
+        system(cmd);
+
+        % splice string to form commander of testing
+        gibbs_maxiter = 100;     % for inference on new data
+        model_prefix = 'review.lda.gibbs++.tr';
+        cmd = '../discLDA/src/lda -inf -dir ../features/ -model ';
+        cmd = [cmd, model_prefix, ' -niters ', num2str(gibbs_maxiter),...
+            ' -dfile ', test_data_file];
+        system(cmd);
+
+        % call linear regression
+        lr(train_feature, topics, test_feature);
+
+    case 'variation',
+        topics = 25;
+        em_maxiter = 200;
         dem_maxiter = 20;
         feature_file = '../features/review_features.lda.vari.mat';
         ldaVariation(feature_file, topics, em_maxiter, dem_maxiter);
