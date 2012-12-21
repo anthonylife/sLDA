@@ -1,0 +1,160 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+BUFF_SIZE_LONG	constants.h	27;"	d
+BUFF_SIZE_SHORT	constants.h	28;"	d
+CC	Makefile	/^CC=		g++$/;"	m
+K	model.h	/^    int K; \/\/ number of topics$/;"	m	class:model
+M	dataset.h	/^    int M; \/\/ number of documents$/;"	m	class:dataset
+M	model.h	/^    int M; \/\/ dataset size (i.e., number of docs)$/;"	m	class:model
+MAIN	Makefile	/^MAIN=		lda$/;"	m
+MODEL_STATUS_EST	constants.h	31;"	d
+MODEL_STATUS_ESTC	constants.h	32;"	d
+MODEL_STATUS_INF	constants.h	33;"	d
+MODEL_STATUS_UNKNOWN	constants.h	30;"	d
+OBJS	Makefile	/^OBJS=		strtokenizer.o dataset.o utils.o model.o$/;"	m
+Totalwords	dataset.h	/^    int Totalwords; \/\/ total number of words in corpus$/;"	m	class:dataset
+Totalwords	model.h	/^    int Totalwords; \/\/ total number of words, inclued repeated$/;"	m	class:model
+V	dataset.h	/^    int V; \/\/ number of words$/;"	m	class:dataset
+V	model.h	/^    int V; \/\/ vocabulary size$/;"	m	class:model
+_CONSTANTS_H	constants.h	25;"	d
+_DATASET_H	dataset.h	25;"	d
+_MODEL_H	model.h	33;"	d
+_STRTOKENIZER_H	strtokenizer.h	25;"	d
+_UTILS_H	utils.h	25;"	d
+_add_doc	dataset.h	/^    void _add_doc(document * doc, int idx) {$/;"	f	class:dataset
+_docs	dataset.h	/^    document ** _docs; \/\/ used only for inference$/;"	m	class:dataset
+_id2id	dataset.h	/^    map<int, int> _id2id; \/\/ also used only for inference$/;"	m	class:dataset
+add_doc	dataset.h	/^    void add_doc(document * doc, int idx) {$/;"	f	class:dataset
+allocate	dataset.cpp	/^void document::allocate(int totalwdcnt){$/;"	f	class:document
+alpha	model.h	/^    double alpha, beta; \/\/ LDA hyperparameters $/;"	m	class:model
+beta	model.h	/^    double alpha, beta; \/\/ LDA hyperparameters $/;"	m	class:model
+compute_feature	model.cpp	/^void model::compute_feature(){$/;"	f	class:model
+compute_loglikhood	model.cpp	/^void model::compute_loglikhood(double * lik_biarray, string choice){$/;"	f	class:model
+compute_newphi	model.cpp	/^void model::compute_newphi() {$/;"	f	class:model
+compute_newtheta	model.cpp	/^void model::compute_newtheta() {$/;"	f	class:model
+compute_perplexity	model.cpp	/^float model::compute_perplexity(double log_lik){$/;"	f	class:model
+compute_phi	model.cpp	/^void model::compute_phi() {$/;"	f	class:model
+compute_theta	model.cpp	/^void model::compute_theta() {$/;"	f	class:model
+count_tokens	strtokenizer.cpp	/^int strtokenizer::count_tokens() {$/;"	f	class:strtokenizer
+dataset	dataset.h	/^    dataset() {$/;"	f	class:dataset
+dataset	dataset.h	/^    dataset(int M) {$/;"	f	class:dataset
+dataset	dataset.h	/^class dataset {$/;"	c
+deallocate	dataset.h	/^    void deallocate() {$/;"	f	class:dataset
+dfile	model.h	/^    string dfile;		\/\/ data file    $/;"	m	class:model
+dir	model.h	/^    string dir;			\/\/ model directory$/;"	m	class:model
+docs	dataset.h	/^    document ** docs;$/;"	m	class:dataset
+document	dataset.h	/^    document() {$/;"	f	class:document
+document	dataset.h	/^    document(int length) {$/;"	f	class:document
+document	dataset.h	/^    document(int length, int * words) {$/;"	f	class:document
+document	dataset.h	/^    document(int length, int * words, string rawstr) {$/;"	f	class:document
+document	dataset.h	/^    document(vector<int> & doc) {$/;"	f	class:document
+document	dataset.h	/^    document(vector<int> & doc, string rawstr) {$/;"	f	class:document
+document	dataset.h	/^class document {$/;"	c
+estimate	model.cpp	/^void model::estimate() {$/;"	f	class:model
+generate_model_name	utils.cpp	/^string utils::generate_model_name(int iter) {$/;"	f	class:utils
+id2word	model.h	/^    mapid2word id2word; \/\/ word map [int => string]$/;"	m	class:model
+idx	strtokenizer.h	/^    int idx;$/;"	m	class:strtokenizer
+inf_liter	model.h	/^    int inf_liter;$/;"	m	class:model
+inf_sampling	model.cpp	/^int model::inf_sampling(int m, int n) {$/;"	f	class:model
+inference	model.cpp	/^void model::inference() {$/;"	f	class:model
+init	model.cpp	/^int model::init(int argc, char ** argv, int dicnum, int docnum, \\$/;"	f	class:model
+init_est	model.cpp	/^int model::init_est(int dicnum, int docnum, int headernum) {$/;"	f	class:model
+init_estc	model.cpp	/^int model::init_estc() {$/;"	f	class:model
+init_inf	model.cpp	/^int model::init_inf(int dicnum, int docnum, int headernum) {$/;"	f	class:model
+length	dataset.h	/^    int length;     \/\/ number of unique words$/;"	m	class:document
+liter	model.h	/^    int liter; \/\/ the iteration at which the model was saved$/;"	m	class:model
+load_model	model.cpp	/^int model::load_model(string model_name) {$/;"	f	class:model
+main	lda.cpp	/^int main(int argc, char ** argv) {$/;"	f
+mapid2word	dataset.h	/^typedef map<int, string> mapid2word;$/;"	t
+mapword2id	dataset.h	/^typedef map<string, int> mapword2id;$/;"	t
+model	model.h	/^    model() {$/;"	f	class:model
+model	model.h	/^class model {$/;"	c
+model_name	model.h	/^    string model_name;		\/\/ model name$/;"	m	class:model
+model_status	model.h	/^    int model_status;		\/\/ model status:$/;"	m	class:model
+nd	model.h	/^    int ** nd; \/\/ na[i][j]: number of words in document i assigned to topic j, size M x K$/;"	m	class:model
+ndsum	model.h	/^    int * ndsum; \/\/ nasum[i]: total number of words in document i, size M$/;"	m	class:model
+newM	model.h	/^    int newM;$/;"	m	class:model
+newV	model.h	/^    int newV;$/;"	m	class:model
+newnd	model.h	/^    int ** newnd;$/;"	m	class:model
+newndsum	model.h	/^    int * newndsum;$/;"	m	class:model
+newnw	model.h	/^    int ** newnw;$/;"	m	class:model
+newnwsum	model.h	/^    int * newnwsum;$/;"	m	class:model
+newphi	model.h	/^    double ** newphi;$/;"	m	class:model
+newtheta	model.h	/^    double ** newtheta;$/;"	m	class:model
+newz	model.h	/^    int ** newz;$/;"	m	class:model
+next_token	strtokenizer.cpp	/^string strtokenizer::next_token() {    $/;"	f	class:strtokenizer
+niters	model.h	/^    int niters; \/\/ number of Gibbs sampling iterations$/;"	m	class:model
+nw	model.h	/^    int ** nw; \/\/ cwt[i][j]: number of instances of word\/term i assigned to topic j, size V x K$/;"	m	class:model
+nwsum	model.h	/^    int * nwsum; \/\/ nwsum[j]: total number of words assigned to topic j, size K$/;"	m	class:model
+others_suffix	model.h	/^    string others_suffix;	\/\/ suffix for file containing other parameters$/;"	m	class:model
+p	model.h	/^    double * p; \/\/ temp variable for sampling$/;"	m	class:model
+parse	strtokenizer.cpp	/^void strtokenizer::parse(string str, string seperators) {$/;"	f	class:strtokenizer
+parse_args	model.cpp	/^int model::parse_args(int argc, char ** argv) {$/;"	f	class:model
+parse_args	utils.cpp	/^int utils::parse_args(int argc, char ** argv, model * pmodel) {$/;"	f	class:utils
+phi	model.h	/^    double ** phi; \/\/ phi: topic-word distributions, size K x V$/;"	m	class:model
+phi_suffix	model.h	/^    string phi_suffix;		\/\/ suffix for phi file$/;"	m	class:model
+pnewdata	model.h	/^    dataset * pnewdata; \/\/ pointer to new dataset object$/;"	m	class:model
+ptrndata	model.h	/^    dataset * ptrndata;	\/\/ pointer to training dataset object$/;"	m	class:model
+quicksort	utils.cpp	/^void utils::quicksort(vector<pair<int, double> > & vect, int left, int right) {$/;"	f	class:utils
+rate	dataset.h	/^    float rate;     \/\/ the rate of the corresponding document$/;"	m	class:document
+rawstr	dataset.h	/^    string rawstr;$/;"	m	class:document
+read_and_parse	utils.cpp	/^int utils::read_and_parse(string filename, model * pmodel) {$/;"	f	class:utils
+read_newdata	dataset.bak.cpp	/^int dataset::read_newdata(string dfile, string wordmapfile) {$/;"	f	class:dataset
+read_newdata	dataset.cpp	/^int dataset::read_newdata(string dfile, string wordmapfile) {$/;"	f	class:dataset
+read_newdata_withrawstrs	dataset.bak.cpp	/^int dataset::read_newdata_withrawstrs(string dfile, string wordmapfile) {$/;"	f	class:dataset
+read_newdata_withrawstrs	dataset.cpp	/^int dataset::read_newdata_withrawstrs(string dfile, string wordmapfile) {$/;"	f	class:dataset
+read_nv_data	dataset.cpp	/^int dataset::read_nv_data(string dfile, int dicnum, int docnum, int headernum){$/;"	f	class:dataset
+read_nv_newdata	dataset.cpp	/^int dataset::read_nv_newdata(string dfile, int dicnum, int docnum, \\$/;"	f	class:dataset
+read_trndata	dataset.bak.cpp	/^int dataset::read_trndata(string dfile, string wordmapfile) {$/;"	f	class:dataset
+read_trndata	dataset.cpp	/^int dataset::read_trndata(string dfile, string wordmapfile) {$/;"	f	class:dataset
+read_wordmap	dataset.bak.cpp	/^int dataset::read_wordmap(string wordmapfile, mapid2word * pid2word) {$/;"	f	class:dataset
+read_wordmap	dataset.bak.cpp	/^int dataset::read_wordmap(string wordmapfile, mapword2id * pword2id) {$/;"	f	class:dataset
+read_wordmap	dataset.cpp	/^int dataset::read_wordmap(string wordmapfile, mapid2word * pid2word) {$/;"	f	class:dataset
+read_wordmap	dataset.cpp	/^int dataset::read_wordmap(string wordmapfile, mapword2id * pword2id) {$/;"	f	class:dataset
+sampling	model.cpp	/^int model::sampling(int m, int n) {$/;"	f	class:model
+save_inf_model	model.cpp	/^int model::save_inf_model(string featurefile_phi, \\$/;"	f	class:model
+save_inf_model	model.cpp	/^int model::save_inf_model(string model_name) {$/;"	f	class:model
+save_inf_model_newphi	model.cpp	/^int model::save_inf_model_newphi(string filename) {$/;"	f	class:model
+save_inf_model_newtheta	model.cpp	/^int model::save_inf_model_newtheta(string filename) {$/;"	f	class:model
+save_inf_model_others	model.cpp	/^int model::save_inf_model_others(string filename) {$/;"	f	class:model
+save_inf_model_tassign	model.cpp	/^int model::save_inf_model_tassign(string filename) {$/;"	f	class:model
+save_inf_model_twords	model.cpp	/^int model::save_inf_model_twords(string filename) {$/;"	f	class:model
+save_model	model.cpp	/^int model::save_model(string model_name) {$/;"	f	class:model
+save_model	model.cpp	/^int model::save_model(string phifile, string thetafile, string tassignfile,\\$/;"	f	class:model
+save_model_others	model.cpp	/^int model::save_model_others(string filename) {$/;"	f	class:model
+save_model_phi	model.cpp	/^int model::save_model_phi(string filename) {$/;"	f	class:model
+save_model_tassign	model.cpp	/^int model::save_model_tassign(string filename) {$/;"	f	class:model
+save_model_theta	model.cpp	/^int model::save_model_theta(string filename) {$/;"	f	class:model
+save_model_twords	model.cpp	/^int model::save_model_twords(string filename) {$/;"	f	class:model
+savestep	model.h	/^    int savestep; \/\/ saving period$/;"	m	class:model
+set_default_values	model.cpp	/^void model::set_default_values() {$/;"	f	class:model
+show_help	lda.cpp	/^void show_help() {$/;"	f
+sort	utils.cpp	/^void utils::sort(vector<double> & probs, vector<int> & words) {$/;"	f	class:utils
+start_scan	strtokenizer.cpp	/^void strtokenizer::start_scan() {$/;"	f	class:strtokenizer
+strtokenizer	strtokenizer.cpp	/^strtokenizer::strtokenizer(string str, string seperators) {$/;"	f	class:strtokenizer
+strtokenizer	strtokenizer.h	/^class strtokenizer {$/;"	c
+tassign_suffix	model.h	/^    string tassign_suffix;	\/\/ suffix for topic assignment file$/;"	m	class:model
+theta	model.h	/^    double ** theta; \/\/ theta: document-topic distributions, size M x K$/;"	m	class:model
+theta_suffix	model.h	/^    string theta_suffix;	\/\/ suffix for theta file$/;"	m	class:model
+token	strtokenizer.cpp	/^string strtokenizer::token(int i) {$/;"	f	class:strtokenizer
+tokens	strtokenizer.h	/^    vector<string> tokens;$/;"	m	class:strtokenizer
+totalwdcnt	dataset.h	/^    int totalwdcnt; \/\/ number of all words, including repeated$/;"	m	class:document
+trainlogfile	model.h	/^    string trainlogfile;	\/\/ training log file$/;"	m	class:model
+twords	model.h	/^    int twords; \/\/ print out top words per each topic$/;"	m	class:model
+twords_suffix	model.h	/^    string twords_suffix;	\/\/ suffix for file containing words-per-topics$/;"	m	class:model
+utils	utils.h	/^class utils {$/;"	c
+withrawstrs	model.h	/^    int withrawstrs;$/;"	m	class:model
+wordmapfile	model.h	/^    string wordmapfile;		\/\/ file that contains word map [string -> integer id]$/;"	m	class:model
+words	dataset.h	/^    int * words;$/;"	m	class:document
+words_cnt	dataset.h	/^    int * words_cnt;$/;"	m	class:document
+words_id	dataset.h	/^    int * words_id;$/;"	m	class:document
+write_wordmap	dataset.bak.cpp	/^int dataset::write_wordmap(string wordmapfile, mapword2id * pword2id) {$/;"	f	class:dataset
+write_wordmap	dataset.cpp	/^int dataset::write_wordmap(string wordmapfile, mapword2id * pword2id) {$/;"	f	class:dataset
+z	model.h	/^    int ** z; \/\/ topic assignments for words, size M x doc.size()$/;"	m	class:model
+~dataset	dataset.h	/^    ~dataset() {$/;"	f	class:dataset
+~document	dataset.h	/^    ~document() {$/;"	f	class:document
+~model	model.cpp	/^model::~model() {$/;"	f	class:model
