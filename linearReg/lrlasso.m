@@ -15,8 +15,8 @@ feature_file = '../features/review_features.tf-idf.txt';
 
 % (1) Initialization
 % ==================
-mt_choice = 'CD';
-%mt_choice = 'IST';
+%mt_choice = 'CD';
+mt_choice = 'IST';
 
 ft_dim = topics;
 tr_rate_file = '../datasets/train_review.rate';
@@ -35,8 +35,6 @@ tst_rate = load(tst_rate_file);
 tr_ft(:,ft_dim+1) = 1;    % bias item
 tst_ft(:,ft_dim+1) = 1;
 
-% settings
-W = repmat(0.0, ft_dim+1, 1);
 
 
 % (2) Training
@@ -46,6 +44,8 @@ case 'CD',
     % (CD-1)weight initialization, using sgd to avoid to get the inverse
     % of the large matrix.
     % --------------------
+    % settings
+    W = repmat(0.0, ft_dim+1, 1);
     sgd_max_iter = 300;
     sgd_lrate = 1e-4;
     sgd_threshold = 1e-2;
@@ -53,6 +53,7 @@ case 'CD',
 
     err_old = 0.0;
     err_new = 0.0;
+    %if 0,
     for i=1:sgd_max_iter,
         seq = randperm(docnum/2);
         for j = seq,
@@ -66,6 +67,8 @@ case 'CD',
         end
         err_old = err_new;
     end
+    fprintf('Weight initialization finish!\n');
+    %end
 
     % (CD-2)start CD learning method
     % ------------------------------
@@ -73,13 +76,13 @@ case 'CD',
     cd_threshold = 1e-2;
     cd_max_iter = 400;
 
-    interval = 20;
+    cd_interval = 20;
     old_W = repmat(0.0, ft_dim+1, 1);
     tic;
     for i=1:cd_max_iter,
         for j=1:ft_dim+1,
             a = 2*sum(tr_ft(:,j).^2);
-            c = 2*tr_ft(:,j)*(tr_rate(:,2)-tr_ft*W+W(j).*tr_ft(:,j))
+            c = 2*tr_ft(:,j)'*(tr_rate(:,2)-tr_ft*W+W(j).*tr_ft(:,j));
             if abs(c/a) > cd_lambda/a,
                 W(j) = sign(c/a)*(abs(c/a) - cd_lambda/a);
             else,
@@ -90,21 +93,43 @@ case 'CD',
         if sum(abs(W-old_W)) < cd_threshold,
             break;
         end
-        if mod(i, interval) == 0,
+        old_W = W;
+        if mod(i, cd_interval) == 0,
             elapsed = toc;
             fprintf('Up to now, total time cost = %s\n', rtime(elapsed));
         end
     end
-    
-    % (CD-3)show updated weights
-    % --------------------------
-    disp('New weight:');
-    W'
 
 case 'IST',
-    Ist_lambda = 0.5;   % sparse controling parameter
-    
-    break;
+    Ist_max_iter = 500;
+    Ist_lambda = 0.05;   % sparse controling parameter
+    Ist_lrate = 1e-4;
+    Ist_threshold = 1e-3;
+    Ist_interval = 20;
+
+    % settings
+    W = rand(ft_dim+1, 1);
+    old_W = repmat(0.0, ft_dim+1, 1);
+    for i=1:Ist_max_iter,
+        seq = randperm(docnum/2);
+        for j=seq,
+            temp_W = W - Ist_lrate*(2*(tr_ft(j,:)*W...
+                -tr_rate(j,2))*tr_ft(j,:)');
+            W(find(abs(temp_W) <= Ist_lambda)) = 0;
+            idx = find(abs(temp_W) >= Ist_lambda);
+            W(idx) = sign(temp_W(idx)).*(abs(temp_W(idx)) - Ist_lambda);
+        end
+
+        fprintf('Difference: %f...\n', sum(abs(W-old_W)));
+        if sum(abs(W-old_W)) < cd_threshold,
+            break;
+        end
+        old_W = W;
+        if mod(i, Ist_interval) == 0,
+            elapsed = toc;
+            fprintf('Up to now, total time cost = %s\n', rtime(elapsed));
+        end
+    end
 
 otherwise,
     error('Invalid method choice.\n');
