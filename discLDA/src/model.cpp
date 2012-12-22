@@ -16,8 +16,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with GibbsLDA++; if not, write to the Free Software Foundation,
+ * You should have received a copy of the GNU General Public License * along with GibbsLDA++; if not, write to the Free Software Foundation,
  * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
  */
 
@@ -201,7 +200,7 @@ void model::set_default_values() {
     newphi = NULL;
 
     // for discLda
-    sigma = 0.1;  // fixed
+    sigma = 5;  // fixed
     eta = NULL; // focused on mean para
     bias = 0;
 }
@@ -677,13 +676,11 @@ int model::init_est(int dicnum, int docnum, int headernum) {
     }
 
     // for discLda
-    pre_mle_learn();
-
     eta = new double[K];
     gau_prob = new double[K];
     for (k = 0; k < K; k++){
         eta[k] = 0;
-        gau_prob = 0;
+        gau_prob[k] = 0;
     }
 
     ndsum = new int[M];
@@ -807,6 +804,8 @@ void model::estimate() {
     double lik_biarray[2];
     float perplexity = 0.0;
     int last_iter = liter;
+    
+    pre_mle_learn();
     for (liter = last_iter + 1; liter <= niters + last_iter; liter++) {
 	    printf("Iteration %d...,", liter);
         
@@ -816,10 +815,10 @@ void model::estimate() {
             // for all z_i
 	        for (int m = 0; m < M; m++) {
 	            for (int n = 0; n < ptrndata->docs[m]->length; n++) {
-		        // (z_i = z[m][n])
-		        // sample from p(z_i|z_-i, w)
-		        int topic = sampling(m, n);
-		        z[m][n] = topic;
+		            // (z_i = z[m][n])
+		            // sample from p(z_i|z_-i, w)
+		            int topic = sampling(m, n);
+		            z[m][n] = topic;
 	            }
 	        }
         }
@@ -851,7 +850,9 @@ void model::estimate() {
     
     // compute features
     string fea_file = "../features/review_features.lda.gibbs++.tr.txt";
+    string eta_file = "../features/eta.txt";
     compute_train_feature(fea_file);
+    save_eta(eta_file);
 }
 
 int model::sampling(int m, int n) {
@@ -868,7 +869,6 @@ int model::sampling(int m, int n) {
     
     // for discLDA
     tr_gau_prob(m, w);
-
     // do multinomial sampling via cumulative method
     for (int k = 0; k < K; k++) {
 	p[k] = (nw[w][k] + beta) / (nwsum[k] + Vbeta)
@@ -1123,7 +1123,14 @@ int model::init_inf(int dicnum, int docnum, int headernum) {
     for (k = 0; k < K; k++) {
         newphi[k] = new double[newV];
     }    
-    
+  
+    gau_prob = new double[K];
+    for (k = 0; k < K; k++){
+        gau_prob[k] = 0;
+    }
+    string eta_file = "../features/eta.txt";
+    read_eta(eta_file);
+
     return 0;        
 }
 
@@ -1346,26 +1353,48 @@ void model::tr_gau_prob(int doc_id, int wd_id){
     double exp_sum = 0.0;
     double rate = ptrndata->docs[doc_id]->rate;
     
-    for (int i = 0; i < K; i++){
+    /*for (int i = 0; i < K; i++){
         gau_prob[i] = exp((ndsum[doc_id]*eta[i]*rate
-                    - (1+2*nd[doc_id][i])*pow(eta[i],2)*pow(rate,2)))
+                    - (1+2*nd[doc_id][wd_id])*pow(eta[i],2)*pow(rate,2)))
                     / pow(ndsum[doc_id], 2);
         exp_sum += gau_prob[i];
-    }
+    }*/
 
+    for (int i = 0; i < K; i++){
+        gau_prob[i] = exp((pow(eta[i],2)*(1+2*nd[doc_id][wd_id]))/pow(ndsum[doc_id],2)
+                    - 2*rate*eta[i]/ndsum[doc_id]);
+        for (int j = 0; j < K; j++){
+            if (j != i){
+                gau_prob[i] += exp(2*eta[i]*eta[j]*nd[doc_id][wd_id]/pow(ndsum[doc_id],2));
+            }
+        }
+        gau_prob[i] += exp(2*eta[i]*bias/ndsum[doc_id]);    // adding bias
+        exp_sum += gau_prob[i];
+    }
     for (int i = 0; i < K; i++){
         gau_prob[i] /= exp_sum;
     }
 }
 
-void model:tst_gau_prob(int doc_id, int wd_id){
+void model::tst_gau_prob(int doc_id, int wd_id){
     double exp_sum = 0.0;
     double rate = pnewdata->docs[doc_id]->rate;
     
-    for (int i = 0; i < K; i++){
+    /*for (int i = 0; i < K; i++){
         gau_prob[i] = exp((newndsum[doc_id]*eta[i]*rate
-                    - (1+2*newnd[doc_id][i])*pow(eta[i],2)*pow(rate,2)))
+                    - (1+2*newnd[doc_id][wd_id])*pow(eta[i],2)*pow(rate,2)))
                     / pow(newndsum[doc_id], 2);
+        exp_sum += gau_prob[i];
+    }*/
+    for (int i = 0; i < K; i++){
+        gau_prob[i] = exp((pow(eta[i],2)*(1+2*newnd[doc_id][wd_id]))/pow(newndsum[doc_id],2)
+                    - 2*rate*eta[i]/newndsum[doc_id]);
+        for (int j = 0; j < K; j++){
+            if (j != i){
+                gau_prob[i] += exp(2*eta[i]*eta[j]*newnd[doc_id][wd_id]/pow(newndsum[doc_id],2));
+            }
+        }
+        gau_prob[i] += exp(2*eta[i]*bias/newndsum[doc_id]);    // adding bias
         exp_sum += gau_prob[i];
     }
 
@@ -1386,24 +1415,30 @@ void model::mle_learn(){
     eta_vec = eta_str;
     tr_rate_vec = tr_rate_str;
     // feature 2-d array to matrix
-    for (m = 1; m < M; m++){
-        for (k = 1; k < K; k++){
+    for (int m = 0; m < M; m++){
+        for (int k = 0; k < K; k++){
             sprintf(temp_str, "%f ", tr_fea[m][k]);
             s1 = temp_str;
             s += s1;
             memset(temp_str, 0, 128);
         }
-        s += '1;';  // for bias item
+        if (m != M - 1)
+            s += "1;";  // for bias item
+        else
+            s += "1";
     }
     tr_fea_mat = s;
-
-    // calculation, least square method
+    
+    // learning
     eta_vec = itpp::inv(sigma*itpp::eye(K+1)+tr_fea_mat.transpose()*tr_fea_mat)
             * tr_fea_mat.transpose() * tr_rate_vec;
     
     // update eta parameters
-    for (k = 0; k < K; k++)
+    for (int k = 0; k < K; k++){
         eta[k] = eta_vec(k);
+        cout << eta[k] << ' ';
+    }
+    cout << endl;
     bias = eta_vec(K);
 }
 
@@ -1423,8 +1458,47 @@ void model::pre_mle_learn(){
     
     // model's para eta to vector
     eta_str = "";
-    for (int k = 0; k < K; m++){
+    for (int k = 0; k < K; k++){
         eta_str += "0.0 ";
     }
     eta_str += "0.0";
 }
+
+void model::save_eta(string eta_file){
+    FILE * fout = fopen(eta_file.c_str(), "w");
+    
+    if (!fout) {
+	    printf("Cannot open file %s to save!\n", eta_file.c_str());
+        return ;
+    }
+
+    for (int k = 0; k < K; k++) {    
+	    fprintf(fout, "%f\n", eta[k]);
+    }
+    fprintf(fout, "%f\n", bias);
+    fclose(fout);
+}
+
+void model::read_eta(string eta_file){
+    FILE * fin = fopen(eta_file.c_str(), "r");
+    
+    if (!fin) {
+	    printf("Cannot open file %s to save!\n", eta_file.c_str());
+	    return ;
+    }
+
+    eta = new double[K];
+    for (int k = 0; k < K; k++)
+        eta[k] = 0.0;
+
+    char * buff = new char[128];
+    for (int k = 0; k < K; k++) {    
+	    fgets(buff, 128, fin);
+        eta[k] = atof(buff);
+        printf("%f\n", eta[k]);
+        memset(buff, 0, 129);
+    }
+    fscanf(fin, "%f\n", &bias);
+    fclose(fin);
+}
+

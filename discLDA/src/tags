@@ -32,19 +32,27 @@ add_doc	dataset.h	/^    void add_doc(document * doc, int idx) {$/;"	f	class:data
 allocate	dataset.cpp	/^void document::allocate(int totalwdcnt){$/;"	f	class:document
 alpha	model.h	/^    double alpha, beta; \/\/ LDA hyperparameters $/;"	m	class:model
 beta	model.h	/^    double alpha, beta; \/\/ LDA hyperparameters $/;"	m	class:model
-compute_feature	model.cpp	/^void model::compute_feature(){$/;"	f	class:model
+bias	model.h	/^    double bias;    \/\/ bias of linear regression$/;"	m	class:model
 compute_loglikhood	model.cpp	/^void model::compute_loglikhood(double * lik_biarray, string choice){$/;"	f	class:model
 compute_newphi	model.cpp	/^void model::compute_newphi() {$/;"	f	class:model
 compute_newtheta	model.cpp	/^void model::compute_newtheta() {$/;"	f	class:model
+compute_ns_newphi	model.cpp	/^void model::compute_ns_newphi() {$/;"	f	class:model
+compute_ns_newtheta	model.cpp	/^void model::compute_ns_newtheta() {$/;"	f	class:model
+compute_ns_phi	model.cpp	/^void model::compute_ns_phi(){$/;"	f	class:model
+compute_ns_theta	model.cpp	/^void model::compute_ns_theta(){$/;"	f	class:model
 compute_perplexity	model.cpp	/^float model::compute_perplexity(double log_lik){$/;"	f	class:model
 compute_phi	model.cpp	/^void model::compute_phi() {$/;"	f	class:model
+compute_test_feature	model.cpp	/^void model::compute_test_feature(string fea_file){$/;"	f	class:model
 compute_theta	model.cpp	/^void model::compute_theta() {$/;"	f	class:model
+compute_train_feature	model.cpp	/^double ** model::compute_train_feature(){$/;"	f	class:model
+compute_train_feature	model.cpp	/^void model::compute_train_feature(string fea_file){$/;"	f	class:model
 count_tokens	strtokenizer.cpp	/^int strtokenizer::count_tokens() {$/;"	f	class:strtokenizer
 dataset	dataset.h	/^    dataset() {$/;"	f	class:dataset
 dataset	dataset.h	/^    dataset(int M) {$/;"	f	class:dataset
 dataset	dataset.h	/^class dataset {$/;"	c
 deallocate	dataset.h	/^    void deallocate() {$/;"	f	class:dataset
 dfile	model.h	/^    string dfile;		\/\/ data file    $/;"	m	class:model
+dict	model.h	/^    bool * dict;    \/\/ record which word occured in training data$/;"	m	class:model
 dir	model.h	/^    string dir;			\/\/ model directory$/;"	m	class:model
 docs	dataset.h	/^    document ** docs;$/;"	m	class:dataset
 document	dataset.h	/^    document() {$/;"	f	class:document
@@ -55,6 +63,9 @@ document	dataset.h	/^    document(vector<int> & doc) {$/;"	f	class:document
 document	dataset.h	/^    document(vector<int> & doc, string rawstr) {$/;"	f	class:document
 document	dataset.h	/^class document {$/;"	c
 estimate	model.cpp	/^void model::estimate() {$/;"	f	class:model
+eta	model.h	/^    double * eta;   \/\/ mean of Gaussian distribution$/;"	m	class:model
+eta_str	model.h	/^    string eta_str;$/;"	m	class:model
+gau_prob	model.h	/^    double * gau_prob;  \/\/ probability of Gaussian distribution$/;"	m	class:model
 generate_model_name	utils.cpp	/^string utils::generate_model_name(int iter) {$/;"	f	class:utils
 id2word	model.h	/^    mapid2word id2word; \/\/ word map [int => string]$/;"	m	class:model
 idx	strtokenizer.h	/^    int idx;$/;"	m	class:strtokenizer
@@ -71,6 +82,7 @@ load_model	model.cpp	/^int model::load_model(string model_name) {$/;"	f	class:mo
 main	lda.cpp	/^int main(int argc, char ** argv) {$/;"	f
 mapid2word	dataset.h	/^typedef map<int, string> mapid2word;$/;"	t
 mapword2id	dataset.h	/^typedef map<string, int> mapword2id;$/;"	t
+mle_learn	model.cpp	/^void model::mle_learn(){$/;"	f	class:model
 model	model.h	/^    model() {$/;"	f	class:model
 model	model.h	/^class model {$/;"	c
 model_name	model.h	/^    string model_name;		\/\/ model name$/;"	m	class:model
@@ -98,6 +110,7 @@ parse_args	utils.cpp	/^int utils::parse_args(int argc, char ** argv, model * pmo
 phi	model.h	/^    double ** phi; \/\/ phi: topic-word distributions, size K x V$/;"	m	class:model
 phi_suffix	model.h	/^    string phi_suffix;		\/\/ suffix for phi file$/;"	m	class:model
 pnewdata	model.h	/^    dataset * pnewdata; \/\/ pointer to new dataset object$/;"	m	class:model
+pre_mle_learn	model.cpp	/^void model::pre_mle_learn(){$/;"	f	class:model
 ptrndata	model.h	/^    dataset * ptrndata;	\/\/ pointer to training dataset object$/;"	m	class:model
 quicksort	utils.cpp	/^void utils::quicksort(vector<pair<int, double> > & vect, int left, int right) {$/;"	f	class:utils
 rate	dataset.h	/^    float rate;     \/\/ the rate of the corresponding document$/;"	m	class:document
@@ -133,6 +146,7 @@ save_model_twords	model.cpp	/^int model::save_model_twords(string filename) {$/;
 savestep	model.h	/^    int savestep; \/\/ saving period$/;"	m	class:model
 set_default_values	model.cpp	/^void model::set_default_values() {$/;"	f	class:model
 show_help	lda.cpp	/^void show_help() {$/;"	f
+sigma	model.h	/^    double sigma;   \/\/ variance of Gaussian distribution$/;"	m	class:model
 sort	utils.cpp	/^void utils::sort(vector<double> & probs, vector<int> & words) {$/;"	f	class:utils
 start_scan	strtokenizer.cpp	/^void strtokenizer::start_scan() {$/;"	f	class:strtokenizer
 strtokenizer	strtokenizer.cpp	/^strtokenizer::strtokenizer(string str, string seperators) {$/;"	f	class:strtokenizer
@@ -143,7 +157,10 @@ theta_suffix	model.h	/^    string theta_suffix;	\/\/ suffix for theta file$/;"	m
 token	strtokenizer.cpp	/^string strtokenizer::token(int i) {$/;"	f	class:strtokenizer
 tokens	strtokenizer.h	/^    vector<string> tokens;$/;"	m	class:strtokenizer
 totalwdcnt	dataset.h	/^    int totalwdcnt; \/\/ number of all words, including repeated$/;"	m	class:document
+tr_gau_prob	model.cpp	/^void model::tr_gau_prob(int doc_id, int wd_id){$/;"	f	class:model
+tr_rate_str	model.h	/^    string tr_rate_str;$/;"	m	class:model
 trainlogfile	model.h	/^    string trainlogfile;	\/\/ training log file$/;"	m	class:model
+tst_gau_prob	model.cpp	/^void model::tst_gau_prob(int doc_id, int wd_id){$/;"	f	class:model
 twords	model.h	/^    int twords; \/\/ print out top words per each topic$/;"	m	class:model
 twords_suffix	model.h	/^    string twords_suffix;	\/\/ suffix for file containing words-per-topics$/;"	m	class:model
 utils	utils.h	/^class utils {$/;"	c

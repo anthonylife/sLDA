@@ -4,7 +4,7 @@ OBJS=		strtokenizer.o dataset.o utils.o model.o
 MAIN=		lda
  
 all:	$(OBJS) $(MAIN).cpp
-	$(CC) -g -o $(MAIN) $(MAIN).cpp $(OBJS)
+	$(CC) `pkg-config --cflags itpp` -g -o $(MAIN) $(MAIN).cpp $(OBJS) `pkg-config --libs itpp`	
 	strip $(MAIN)
 
 strtokenizer.o:	strtokenizer.h strtokenizer.cpp
@@ -17,7 +17,7 @@ utils.o:	utils.h utils.cpp
 	$(CC) -c -o utils.o utils.cpp
 
 model.o:	model.h model.cpp
-	$(CC) -c -o model.o model.cpp
+	$(CC) `pkg-config --cflags itpp` -c -o model.o model.cpp `pkg-config --libs itpp`
 
 test:
 	

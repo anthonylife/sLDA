@@ -186,6 +186,8 @@ public:
     void tst_gau_prob(int doc_id, int wd_id);
     void mle_learn();
     void pre_mle_learn();
+    void save_eta(string eta_file);
+    void read_eta(string eta_file);
 };
 
 #endif
