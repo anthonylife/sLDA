@@ -335,8 +335,8 @@ int dataset::read_nv_data(string dfile, int dicnum, int docnum, int headernum){
                 printf("Input data file is invalid.\n");
                 return 1;
             }
-            temp_short = temp_long.substr(0, idx-1);
-            wd_id = atoi(temp_short.c_str());
+            temp_short = temp_long.substr(0, idx);
+            wd_id = atoi(temp_short.c_str()) - 1;
             temp_short = temp_long.substr(idx+1, temp_long.length());
             wd_cnt = atoi(temp_short.c_str());
             pdoc->words_id[j-2] = wd_id;
@@ -427,8 +427,8 @@ int dataset::read_nv_newdata(string dfile, int dicnum, int docnum, \
                 printf("Input data file is invalid.\n");
                 return 1;
             }
-            temp_short = temp_long.substr(0, idx-1);
-            wd_id = atoi(temp_short.c_str());
+            temp_short = temp_long.substr(0, idx);
+            wd_id = atoi(temp_short.c_str()) - 1;
             temp_short = temp_long.substr(idx+1, temp_long.length());
             wd_cnt = atoi(temp_short.c_str());
             pdoc->words_id[j-2] = wd_id;

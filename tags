@@ -1,0 +1,68 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+accum_beta	ldaVariation/accum_beta.m	/^function betas = accum_beta(betas,q,t)$/;"	f
+accum_para	sLDA/accum_beta.m	/^function accum_para(doc, wordNum)$/;"	f
+assert	ldaVariation/assert.m	/^function assert(b)$/;"	f
+bi_item	linearReg/gen_tfidf.py	/^            bi_item = item.split(':')$/;"	v
+biparts	datasets/wdReIdx.py	/^            biparts = item.split(':')$/;"	v
+compLoghood	ldaGibbs/private/compLoghood.m	/^function loghood = compLoghood()$/;"	f
+compPerplex	ldaGibbs/private/compPerplex.m	/^function perplex = compPerplex(loghood)$/;"	f
+converged	ldaVariation/converged.m	/^function b = converged(u,udash,threshhold)$/;"	f
+converged	sLDA/converged.m	/^function tag = converged(vec1, vec2, threshold)$/;"	f
+data_file	linearReg/gen_tfidf.py	/^data_file = ['..\/datasets\/train_review.dat', '..\/datasets\/test_review.dat']$/;"	v
+diff_vec	ldaVariation/diff_vec.m	/^function p = diff_vec(u,v)$/;"	f
+doc	linearReg/gen_tfidf.py	/^        doc = [0.0 for i in range(total_wordnum)]$/;"	v
+doc	linearReg/gen_tfidf.py	/^        doc = map(lambda x: float(x)\/maxwordcnt, doc)$/;"	v
+docIdx	ldaGibbs/convertfeatures.py	/^docIdx = 1$/;"	v
+docs	linearReg/gen_tfidf.py	/^docs = []               # tf-idf value in each document$/;"	v
+explaTopic	ldaGibbs/private/explaTopic.m	/^function explaTopic()$/;"	f
+feature_file	linearReg/gen_tfidf.py	/^feature_file = '..\/features\/review_features.tf-idf.txt'$/;"	v
+featurefiles	ldaGibbs/convertfeatures.py	/^featurefiles = ['..\/datasets\/train_review.lda', '..\/datasets\/test_review.lda'];$/;"	v
+features	ldaVariation/features.m	/^function n = features(m)$/;"	f
+fmatrix	ldaVariation/fmatrix.m	/^function m = fmatrix(file,offset)$/;"	f
+getcorpllhood	sLDA/getcorpllhood.m	/^function [corp_llhood, perword_llhood]= getcorpllhood(docs, choice)$/;"	f
+getdocllhood	sLDA/getdocllhood.m	/^function doc_llhood = getdocllhood(doc, choice)$/;"	f
+init_beta	sLDA/init_beta.m	/^function beta = init_beta()$/;"	f
+inputfile	datasets/wdReIdx.py	/^inputfile = ['train_review.dat', 'test_review.dat']$/;"	v
+isint	ldaVariation/isint.m	/^function b = isint(n)$/;"	f
+ldaGibbs	ldaGibbs/ldaGibbs.m	/^function ldaGibbs(feature_file, topics, maxIter)$/;"	f
+lda_lik	ldaVariation/lda_lik.m	/^function lik = lda_lik(d,beta,gammas)$/;"	f
+ldamain	ldaVariation/ldamain.m	/^function [alpha,beta] = ldamain(train,k,emmax,demmax)$/;"	f
+loadreview	sLDA/loadreview.m	/^function corp = loadreview(trainfile, dicwordnum)$/;"	f
+loggamma	sLDA/loggamma.m	/^function result = loggamma(in_val)$/;"	f
+lr	linearReg/lr.m	/^function lr(feature_file, topics)$/;"	f
+math	linearReg/gen_tfidf.py	/^import math$/;"	i
+maxwordcnt	linearReg/gen_tfidf.py	/^                maxwordcnt = temp_cnt$/;"	v
+maxwordcnt	linearReg/gen_tfidf.py	/^        maxwordcnt = 0$/;"	v
+mnormalize	ldaVariation/mnormalize.m	/^function x = mnormalize(m,d)$/;"	f
+newton_alpha	ldaVariation/newton_alpha.m	/^function alpha = newton_alpha (gammas,maxiter,ini_alpha)$/;"	f
+newton_alpha	sLDA/newton_alpha.m	/^function alpha = newton_alpha (gammas,maxiter,ini_alpha)$/;"	f
+normalize	ldaVariation/normalize.m	/^function x = normalize(v)$/;"	f
+normalize	sLDA/normalize.m	/^function nm_para = normalize(para, d)$/;"	f
+outputfile	datasets/wdReIdx.py	/^outputfile = ['train_review.1.dat', 'test_review.1.dat']$/;"	v
+predictiveR2	evaluation/predictiveR2.m	/^function pR2 = predictiveR2(real_Y, pre_Y)$/;"	f
+ratefiles	ldaGibbs/convertfeatures.py	/^ratefiles = ['..\/datasets\/train_review.rate', '..\/datasets\/test_review.rate'];$/;"	v
+res	datasets/wdReIdx.py	/^        res = line.strip('\\n').split(' ')$/;"	v
+res	ldaGibbs/convertfeatures.py	/^        res = line.strip('\\n').split(' ')$/;"	v
+res	linearReg/gen_tfidf.py	/^        res = line.strip('\\n').split(' ')$/;"	v
+rtime	ldaVariation/rtime.m	/^function s = rtime(t)$/;"	f
+skip_header	linearReg/gen_tfidf.py	/^skip_header = 2$/;"	v
+smooth_para	sLDA/smooth_para.m	/^function smooth_para(choice, word_id, smooth_val)$/;"	f
+srcfiles	ldaGibbs/convertfeatures.py	/^srcfiles = ['..\/datasets\/train_review.dat', '..\/datasets\/test_review.dat'];$/;"	v
+temp_cnt	linearReg/gen_tfidf.py	/^            temp_cnt = int(bi_item[1])$/;"	v
+temp_id	linearReg/gen_tfidf.py	/^            temp_id = int(bi_item[0]) - 1$/;"	v
+textread	ldaGibbs/private/textread.m	/^function dict = textread()$/;"	f
+total_docnum	linearReg/gen_tfidf.py	/^total_docnum = 5000$/;"	v
+total_wordnum	linearReg/gen_tfidf.py	/^total_wordnum = 12000$/;"	v
+vbe_step	sLDA/vbe_step.m	/^function [E_Ai, E_AA, doc_llhood] = vbe_step(doc, dicwordnum, E_AA, vbe_maxIter)$/;"	f
+vbem	ldaVariation/vbem.m	/^function [alpha,q] = vbem(d,beta,alpha0,emmax)$/;"	f
+vbm_step	sLDA/vbm_step.m	/^function vbm_step(docs, E_A, E_AA)$/;"	f
+wd_doc	linearReg/gen_tfidf.py	/^wd_doc = {}             # word belongs how many documents$/;"	v
+wfd	datasets/wdReIdx.py	/^    wfd = open(outputfile[i], 'w')$/;"	v
+wfd	linearReg/gen_tfidf.py	/^wfd = open(feature_file, 'w')$/;"	v
+wfd_f	ldaGibbs/convertfeatures.py	/^    wfd_f = open(featurefiles[i], 'w')$/;"	v
+wfd_r	ldaGibbs/convertfeatures.py	/^    wfd_r = open(ratefiles[i], 'w')$/;"	v

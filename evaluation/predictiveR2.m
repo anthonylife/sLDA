@@ -9,6 +9,5 @@ function pR2 = predictiveR2(real_Y, pre_Y)
 %
 %   Date: 12/12/2012
 
-
 mean_Y = sum(real_Y)/length(real_Y);
 pR2 = 1 - sum((real_Y-pre_Y).^2)/sum((real_Y-mean_Y).^2);

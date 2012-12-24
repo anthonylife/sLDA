@@ -32,8 +32,9 @@ Model.maxIter = maxIter;
 %Model.burnIter = 500;
 Model.diff = 1;
 Model.topword=15;
-Model.alpha = 0.01;
-Model.beta = 0.01;
+Model.dicwordnum = 12000;
+Model.alpha = 50/Model.T;
+Model.beta = 0.1;
 Model.paraFile = '../parameters/lda.para';
 
 % Setting corpus paramter
