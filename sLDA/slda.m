@@ -1,3 +1,4 @@
+function slda(topics, em_max_iter, vbe_max_iter)
 % sLDA achieves the version of supervised topic model introduced in paper
 % (Supervised Topic Model, NIPS, 2007) using variational EM method to 
 % learn the model parameters.
@@ -21,21 +22,29 @@ global doc_llhood;
 
 rand('state', sum(100*clock));
 
-trainfile = '../datasets/train_review.dat';
-testfile = '../datasets/test_review.dat';
-resultfile = '../results/result.slda.txt';
+trainfile = './datasets/train_review.dat';
+testfile = './datasets/test_review.dat';
+resultfile = './results/result.slda.txt';
 
-maxIter = 200;   % maximal number of iterations for VBEM
-vbe_maxIter = 80;   % maximal number of iteration for VBE-step
+if nargin < 3,
+    vbe_max_iter = 80;   % maximal number of iteration for VBE-step
+    if nargin < 2,
+        em_max_iter = 200;   % maximal number of iterations for VBEM
+    end
+end
 wordNum = 12000;    % just based on dictionary statistic information
 traindata = loadreview(trainfile, wordNum);  % load review text data
 
 % model parameters
 global model;
-model.K = 20;   % topic dimension
+if nargin < 1,
+    model.K = 20;   % topic dimension
+else,
+    model.K = topics;
+end
 model.alpha = repmat(1/model.K, 1, model.K);
 %model.beta = repmat(1/wordNum, model.K, wordNum);   % model word-topic paras
-model.beta = normalize(rand(model.K, wordNum),2);
+model.beta = mynormalize(rand(model.K, wordNum),2);
 model.eta = repmat(0.0, model.K+1, 1);  % new parameter relative to LDA
 model.sigma = var(traindata.rate);  % use real ratings' variance  
 model.gammas = repmat(0.0, traindata.docnum, model.K);
@@ -63,14 +72,16 @@ E_AA = repmat(0.0, model.K+1, model.K+1);
 
 wfd = fopen(resultfile, 'w');
 % training iteration starts
-for iter=1:maxIter,
+for iter=1:em_max_iter,
     corp_llhood = 0;
-    fprintf(1,'iteration %d/%d...\t',iter,maxIter);
-    fprintf(wfd,'iteration %d/%d...\t',iter,maxIter);
+    fprintf(1,'iteration %d/%d...\t',iter,em_max_iter);
+    fprintf(wfd,'iteration %d/%d...\t',iter,em_max_iter);
     
+    % variational bayesian E-step
+    % ===========================
     for i=1:traindata.docnum,
         [E_A(i,:), E_AA] = vbe_step(traindata.doc(i)...
-            , wordNum, E_AA, vbe_maxIter);
+            , wordNum, E_AA, vbe_max_iter);
         accum_para(traindata.doc(i), wordNum);
     end
     
@@ -85,8 +96,8 @@ for iter=1:maxIter,
     fprintf('Corpus log-likelihood = %f, ', corp_llhood);
     fprintf('per-word log-likelihood = %f...\t',perword_llhood);
     elapsed = toc;
-    fprintf(1,'RTS:%s (%d sec/step)\n', ...
-	    rtime(elapsed * ( maxIter / iter  - 1)), round(elapsed / iter));
+    fprintf(1,'RTS:%s (%d sec/step)\n', ....
+	    rtime(elapsed * ( em_max_iter / iter  - 1)), round(elapsed / iter));
     
     % clear
     E_A(:,:) = 0.0;
@@ -109,7 +120,7 @@ pre_rate = repmat(0.0, 1, testdata.docnum);
 
 % words occured in trian data
 dict = find(sum(model.beta, 1)~=0);
-vbe_maxIter = 40;   % maximal number of iteration for VBE-step
+vbe_max_iter = 40;   % maximal number of iteration for VBE-step
 
 % Strategy 1:
 % inference and predict
@@ -119,7 +130,7 @@ for i=1:testdata.docnum,
     testdata.doc(i).word_id = testdata.doc(i).word_id(idx_src);
     testdata.doc(i).word = testdata.doc(i).word(idx_src);
     
-    [temp0, temp1] = vbe_step(testdata.doc(i), wordNum, -1, vbe_maxIter);
+    [temp0, temp1] = vbe_step(testdata.doc(i), wordNum, -1, vbe_max_iter);
     aver_beta = sum(diag(testdata.doc(i).word)...
         *betas(testdata.doc(i).word_id, :), 1)...
         ./testdata.doc(i).docwordnum;
@@ -127,32 +138,5 @@ for i=1:testdata.docnum,
 end
 eval_result = predictiveR2(testdata.rate, pre_rate);
 fprintf('================================================\n');
-fprintf(1, 'The result of predictive R2 for sLDA method 1 is %f\n', eval_result);
+fprintf(1, 'The result of predictive R2 for sLDA is %f\n', eval_result);
 
-% Strategy 2:
-% inference
-%{
-for i=1:testdata.docnum,
-    % Remove words not occur train data.
-    [comid, idx_src, idx_tar] = intersect(testdata.doc(i).word_id, dict);
-    testdata.doc(i).word_id = testdata.doc(i).word_id(idx_src);
-    testdata.doc(i).word = testdata.doc(i).word(idx_src);
-    
-    [temp0, temp1] = vbe_step(testdata.doc(i), wordNum, -1, vbe_maxIter);
-    accum_para(testdata.doc(i), wordNum);
-end
-
-model.betas = normalize(model.betas, 2);
-
-% predict
-for i=1:testdata.docnum,
-    aver_beta = sum(diag(testdata.doc(i).word)...
-        *model.betas(testdata.doc(i).word_id, :), 1)...
-        ./testdata.doc(i).docwordnum;
-    pre_rate(i) = [aver_beta, 1] * model.eta;
-end
-
-eval_result = predictiveR2(testdata.rate, pre_rate);
-fprintf('================================================\n');
-fprintf(1, 'The result of predictive R2 for sLDA method 2 is %f\n', eval_result);
-%}

@@ -16,7 +16,7 @@ case 'beta'
     ids = find(model.beta==0);
     if length(ids) > 0,
         model.beta(find(model.beta==0)) = smooth_val;
-        model.beta = normalize(model.beta, 2);
+        model.beta = mynormalize(model.beta, 2);
     end
 case 'betas'
     global betas;
@@ -24,7 +24,7 @@ case 'betas'
     if length(ids) > 0,
         temp = betas(word_id,:);
         temp(ids) = smooth_val;
-        betas(word_id,:) = normalize(temp, 2);
+        betas(word_id,:) = mynormalize(temp, 2);
     end
 otherwise,
     error('Invailid choice.');

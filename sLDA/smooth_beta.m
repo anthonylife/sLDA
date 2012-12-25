@@ -13,4 +13,4 @@ if nargin < 1,
 end
 
 model.beta(find(model.beta==0)) = smooth_val;
-model.beta = normalize(model.beta, 2);
+model.beta = mynormalize(model.beta, 2);

@@ -15,7 +15,7 @@ function vbm_step(docs, E_A, E_AA)
 global model;
 
 % update beta
-model.beta = normalize(model.betas', 2); 
+model.beta = mynormalize(model.betas', 2); 
 
 % smooth the words in the test set while not occur in training set
 % and avoid 'NaN' value

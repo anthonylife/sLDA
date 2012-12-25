@@ -814,13 +814,6 @@ void model::estimate() {
 	    printf("Iteration %d...,", liter);
         
         // for all z_i
-	    printf("Total number: %d\n", Totalwords);
-        // compute log-likelihood and perplexity
-        compute_loglikhood(lik_biarray, "train");
-        perplexity = compute_perplexity(lik_biarray[0]);
-        printf("Corpus log-likilihood = %f, per-word log-likilihood = %f, perplexity = %f...\n",\
-                lik_biarray[0], lik_biarray[1], perplexity);
-        getchar();
         for (int m = 0; m < M; m++) {
 	        for (int n = 0; n < ptrndata->docs[m]->length; n++) {
 		        // (z_i = z[m][n])
@@ -1319,7 +1312,6 @@ void model::compute_loglikhood(double * lik_biarray, string choice){
             }
             lik_biarray[0] += log((float)1/M);
             //printf("\nlikelihood: %f\n", lik_biarray[0]);
-            //getchar();
         }
     }else if (choice == "test"){
         compute_ns_newtheta();

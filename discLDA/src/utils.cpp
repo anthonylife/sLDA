@@ -375,3 +375,17 @@ void utils::quicksort(vector<pair<int, double> > & vect, int left, int right) {
     }    
 }
 
+char * utils::rtime(time_t s){
+    char * t_str;
+    int hour, min, sec;
+
+    hour = s / 60 / 60;
+    min = s % (60 * 60) / 60;
+    sec = s % 60;
+   
+    t_str = new char[50];
+    sprintf(t_str, "%2d:%02d:%02d",hour,min,sec);
+
+    return t_str;
+}
+
