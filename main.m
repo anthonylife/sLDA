@@ -13,21 +13,21 @@
 
 % Only learning or learning and prediction
 choice = 'tr_tst';
-choice = 'tst';
+%choice = 'tst';
 
 % Learning methods
-%method = 'tf-idf';     % tf-idf of all words as features for linear regression
-%method = 'lasso';      % feature leanring + 'tf-idf'
-%method = 'gibbs';      % topic as features with matlab gibbs implementation 
-method = 'gibbs++';     % topic as features with C++ gibbs implementation
-%method = 'variation';  % topic as features with matlab variational method implementation
-%method = 'discLda';    % adopt discriminative learning in supervised LDA:
+%method = 'tfidfLr';     % tf-idf of all words as features for linear regression
+%method = 'lassoLr';      % feature leanring + 'tf-idf'
+%method = 'gibbsLda';      % topic as features with matlab gibbs implementation 
+%method = 'gibbs++Lda';     % topic as features with C++ gibbs implementation
+%method = 'variationLda';  % topic as features with matlab variational method implementation
+method = 'discLda';    % adopt discriminative learning in supervised LDA:
                         %   1.Gibbs sampling in E-step; 2.MLE-in M-step
 %method = 'sLda';       % supervised LDA with block coordinate descent method (variational)
 
 if choice == 'tr_tst',
     switch method,
-    case 'gibbs',
+    case 'gibbsLda',
         topics = 20;
         gibbs_maxiter = 500;
         feature_file = './features/review_features.lda.gibbs.mat';
@@ -35,16 +35,16 @@ if choice == 'tr_tst',
         % Linear regression using least squre method
         lr(feature_file, topics);
     
-    case 'gibbs++',
-        topics = 5;
-        gibbs_maxiter = 1000;     % for training
+    case 'gibbs++Lda',
+        topics = 40;
+        gibbs_maxiter = 2000;     % for training
         train_data_file = './datasets/train_review.dat';
         test_data_file = './datasets/test_review.dat';
         train_feature = './features/review_features.lda.gibbs++.tr.txt';
         test_feature = './features/review_features.lda.gibbs++.tst.txt';
 
         % splice string to form commander of training
-        cmd = './ldaGibbs++/src/lda -est -alpha 10 -beta 0.1 -ntopics ';
+        cmd = './ldaGibbs++/src/lda -est -alpha 1.25 -beta 0.1 -ntopics ';
         cmd = [cmd, num2str(topics), ' -niters ', num2str(gibbs_maxiter),...
             ' -dfile ', train_data_file];
         system(cmd);
@@ -60,7 +60,7 @@ if choice == 'tr_tst',
         % call linear regression
         lr(train_feature, topics, test_feature);
 
-    case 'variation',
+    case 'variationLda',
         topics = 25;
         em_maxiter = 200;
         dem_maxiter = 80;
@@ -69,13 +69,13 @@ if choice == 'tr_tst',
         % Linear regression using least squre method
         lr(feature_file, topics);
     
-    case 'tf-idf',
+    case 'tfidfLr',
         topics = 12000; % count of total unique words
         feature_file = './features/review_features.tf-idf.txt';
         % Linear regression using stochastic gradient descent
         lrsgd(topics, feature_file);
 
-    case 'lasso',
+    case 'lassoLr',
         topics = 12000; % count of total unique words
         feature_file = './features/review_features.tf-idf.txt';
         % sparse linear regression with coordinate descent algorithm
@@ -83,7 +83,7 @@ if choice == 'tr_tst',
 
     case 'discLda',
         topics = 20;
-        out_disc_iter = 50;
+        out_disc_iter = 100;
         train_data_file = './datasets/train_review.dat';
         test_data_file = './datasets/test_review.dat';
         
@@ -94,7 +94,7 @@ if choice == 'tr_tst',
         system(cmd);
     
         % splice string to form commander of testing
-        test_maxiter = 20;     % for inference on new data
+        test_maxiter = 400;     % for inference on new data
         model_prefix = 'review.lda.gibbs++.tr';
         cmd = './discLDA/src/lda -inf -dir ./features/ -model ';
         cmd = [cmd, model_prefix, ' -niters ', num2str(test_maxiter),...
@@ -113,5 +113,8 @@ if choice == 'tr_tst',
     otherwise,
         error('Invalid method choice.');
     end
+
+elseif choice == 'tst',
+    break;
 end
 
