@@ -83,7 +83,11 @@ public:
     int * ndsum; // nasum[i]: total number of words in document i, size M
     double ** theta; // theta: document-topic distributions, size M x K
     double ** phi; // phi: topic-word distributions, size K x V
-   
+    int ** mulnw;
+    int ** mulnd;
+    int * mulnwsum;
+    int * mulndsum;
+
     // for slda model with discriminative learning.
     double * eta;   // mean of Gaussian distribution
     double sigma;   // variance of Gaussian distribution

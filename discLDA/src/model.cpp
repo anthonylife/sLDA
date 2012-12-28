@@ -662,13 +662,13 @@ int model::init_est(int dicnum, int docnum, int headernum) {
         }
     }
 	
-    /*mulnw = new int*[V];
+    mulnw = new int*[V];
     for (w = 0; w < V; w++) {
         mulnw[w] = new int[K];
         for (k = 0; k < K; k++) {
     	    mulnw[w][k] = 0;
         }
-    }*/
+    }
 
     nd = new int*[M];
     for (m = 0; m < M; m++) {
@@ -678,33 +678,33 @@ int model::init_est(int dicnum, int docnum, int headernum) {
         }
     }
     
-    /*mulnd = new int*[M];
+    mulnd = new int*[M];
     for (m = 0; m < M; m++) {
         mulnd[m] = new int[K];
         for (k = 0; k < K; k++) {
     	    mulnd[m][k] = 0;
         }
-    }*/
+    }
     
     nwsum = new int[K];
     for (k = 0; k < K; k++) {
 	    nwsum[k] = 0;
     }
 
-    /*mulnwsum = new int[K];
+    mulnwsum = new int[K];
     for (k = 0; k < K; k++) {
 	    mulnwsum[k] = 0;
-    }*/
+    }
     
     ndsum = new int[M];
     for (m = 0; m < M; m++) {
 	    ndsum[m] = 0;
     }
     
-    /*mulndsum = new int[M];
+    mulndsum = new int[M];
     for (m = 0; m < M; m++) {
 	    mulndsum[m] = 0;
-    }*/
+    }
     
     // for discLda
     eta = new double[K];
@@ -836,8 +836,8 @@ void model::estimate() {
     st_time = time(NULL);
     for (liter = last_iter + 1; liter <= niters + last_iter; liter++) {
         // similar to E-step, use Gibbs Sampling
-        int inner_iter = 50;
-        //int start_iter = 20, interval = 4;
+        int inner_iter = 300;
+        int start_iter = 250, interval = 5;
         
         for (int e_iter = 0; e_iter < inner_iter; e_iter++){     
             // for all z_i
@@ -850,7 +850,7 @@ void model::estimate() {
 	            }
 	        }
             // collect
-            /*if (e_iter >= start_iter && (e_iter % interval == 0)){
+            if (e_iter >= start_iter && (e_iter % interval == 0)){
                 for (int v = 0; v < V; v++)
                     for (int k = 0; k < K; k++){
                         mulnw[v][k] += nw[v][k];
@@ -861,7 +861,7 @@ void model::estimate() {
                         mulnd[m][k] += nd[m][k];
                         mulndsum[m] += nd[m][k];
                     }
-            }*/
+            }
         }
 
         // similar to M-step, use MLE with L2-regularization 
@@ -971,8 +971,8 @@ void model::compute_ns_theta(){
     for (int m = 0; m < M; m++) {
 	    for (int k = 0; k < K; k++) {
             if (ndsum[m] != 0)
-                theta[m][k] = (double)nd[m][k] / ndsum[m];
-                //theta[m][k] = (double)mulnd[m][k] / mulndsum[m];
+                //theta[m][k] = (double)nd[m][k] / ndsum[m];
+                theta[m][k] = (double)mulnd[m][k] / mulndsum[m];
         }
     }
 }
@@ -987,8 +987,9 @@ void model::compute_train_feature(string fea_file){
     
     for (int m = 0; m < M; m++) {
         for (int k = 0; k < K; k++){
-            tr_fea[m][k] = (double)nd[m][k] / ndsum[m];
+            //tr_fea[m][k] = (double)nd[m][k] / ndsum[m];
             //tr_fea[m][k] = (double)(nd[m][k] + alpha) / (ndsum[m] + K * alpha);
+            tr_fea[m][k] = (double)mulnd[m][k] / mulndsum[m];
         }
     } 
     
@@ -1018,8 +1019,8 @@ double ** model::compute_train_feature(){
     for (int m = 0; m < M; m++) {
         for (int k = 0; k < K; k++){
             //tr_fea[m][k] = (double)(nd[m][k] + alpha) / (ndsum[m] + K * alpha);
-            tr_fea[m][k] = (double)nd[m][k] / ndsum[m];
-            //tr_fea[m][k] = (double)mulnd[m][k] / mulndsum[m];
+            //tr_fea[m][k] = (double)nd[m][k] / ndsum[m];
+            tr_fea[m][k] = (double)mulnd[m][k] / mulndsum[m];
             //printf("%d, %d, %f\n", mulnd[m][k], mulndsum[m], tr_fea[m][k]);
             //getchar();
         }
@@ -1040,8 +1041,8 @@ void model::compute_ns_phi(){
     for (int k = 0; k < K; k++) {
 	    for (int w = 0; w < V; w++) {
 	        if (nwsum[k] != 0)
-                phi[k][w] = (double)nw[w][k] / nwsum[k];
-                //phi[k][w] = (double)mulnw[w][k] / mulnwsum[k];
+                //phi[k][w] = (double)nw[w][k] / nwsum[k];
+                phi[k][w] = (double)mulnw[w][k] / mulnwsum[k];
 	    }
     }
 
@@ -1143,13 +1144,13 @@ int model::init_inf(int dicnum, int docnum, int headernum) {
         }
     }
     
-    /*mulnw = new int*[newV];
+    mulnw = new int*[newV];
     for (w = 0; w < newV; w++) {
         mulnw[w] = new int[K];
         for (k = 0; k < K; k++) {
     	    mulnw[w][k] = 0;
         }
-    }*/
+    }
 	
     newnd = new int*[newM];
     for (m = 0; m < newM; m++) {
@@ -1159,33 +1160,33 @@ int model::init_inf(int dicnum, int docnum, int headernum) {
         }
     }
     
-    /*mulnd = new int*[newM];
+    mulnd = new int*[newM];
     for (m = 0; m < M; m++) {
         mulnd[m] = new int[K];
         for (k = 0; k < K; k++) {
     	    mulnd[m][k] = 0;
         }
-    }*/
+    }
 	
     newnwsum = new int[K];
     for (k = 0; k < K; k++) {
 	newnwsum[k] = 0;
     }
     
-    /*mulnwsum = new int[K];
+    mulnwsum = new int[K];
     for (k = 0; k < K; k++) {
 	    mulnwsum[k] = 0;
-    }*/
+    }
     
     newndsum = new int[newM];
     for (m = 0; m < newM; m++) {
 	newndsum[m] = 0;
     }
     
-    /*mulndsum = new int[newM];
+    mulndsum = new int[newM];
     for (m = 0; m < newM; m++) {
 	    mulndsum[m] = 0;
-    }*/
+    }
 
     srandom(time(0)); // initialize for random number generation
     newz = new int*[newM];
@@ -1240,7 +1241,7 @@ void model::inference() {
     double lik_biarray[2];
     float perplexity = 0.0;
    
-    //int start_iter = 300, interval = 10;
+    int start_iter = 350, interval = 5;
     printf("Sampling %d iterations for inference!\n", niters);
     for (inf_liter = 1; inf_liter <= niters; inf_liter++) {
 	    printf("Iteration %d...", inf_liter);
@@ -1254,7 +1255,7 @@ void model::inference() {
 	        }
 	    }
         // collect
-        /*if (inf_liter >= start_iter && (inf_liter % interval == 0)){
+        if (inf_liter >= start_iter && (inf_liter % interval == 0)){
             for (int v = 0; v < V; v++)
                 for (int k = 0; k < K; k++){
                     mulnw[v][k] += newnw[v][k];
@@ -1265,7 +1266,7 @@ void model::inference() {
                     mulnd[m][k] += newnd[m][k];
                     mulndsum[m] += newnd[m][k];
                 }
-        }*/
+        }
         compute_loglikhood(lik_biarray, "test");
         perplexity = compute_perplexity(lik_biarray[0]);
         printf("Corpus log-likilihood = %f, per-word log-likilihood = %f, perplexity = %f...\n",\
@@ -1377,6 +1378,7 @@ void model::compute_test_feature(string fea_file){
     for (int m = 0; m < M; m++) {
         for (int k = 0; k < K; k++){
             tst_fea[m][k] = (double)newnd[m][k] / newndsum[m];
+            tst_fea[m][k] = (double)mulnd[m][k] / mulndsum[m];
             //tst_fea[m][k] = (double)(newnd[m][k] + alpha) / (newndsum[m] + K * alpha);
         }
     }
