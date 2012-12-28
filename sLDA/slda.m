@@ -120,7 +120,7 @@ pre_rate = repmat(0.0, 1, testdata.docnum);
 
 % words occured in trian data
 dict = find(sum(model.beta, 1)~=0);
-vbe_max_iter = 40;   % maximal number of iteration for VBE-step
+vbe_max_iter = 80;   % maximal number of iteration for VBE-step
 
 % Strategy 1:
 % inference and predict

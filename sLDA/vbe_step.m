@@ -34,6 +34,7 @@ model.gammas(docIdx,:) = model.alpha ...
     + repmat(doc.docwordnum/model.K, 1, model.K);
 
 switch choice,
+%------------
 case 'train',
 % Some calculation in advance to save time
 npara_part1 = repmat(doc.rate/(doc.docwordnum*model.sigma)...
@@ -63,6 +64,27 @@ for i=1:vbe_maxIter,
     end
     model.gammas(docIdx,:) = gammas;
 end
+%------------
+case 'test',
+for i=1:vbe_maxIter,
+    % update phi
+    betas(doc.word_id,:) = mynormalize(model.beta(:,doc.word_id)'...
+        *diag(exp(psi(model.gammas(docIdx,:)))), 2);
+    
+    % update gamma
+    gammas = model.alpha + doc.word*betas(doc.word_id,:);
+    
+    if i> 1 && converged(model.gammas(docIdx,:), gammas, 1.0e-4),
+        model.gammas(docIdx,:) = gammas;
+        break;
+    end
+    model.gammas(docIdx,:) = gammas;
+end
+%------------
+otherwise
+    error('Invalid choice.');
+end
+
 
 if nargin > 3,
     betas_sum = sum(diag(doc.word)*betas(doc.word_id,:), 1);
@@ -80,23 +102,4 @@ if nargin > 3,
 else
     E_Ai = 0;
     E_AA = 0;
-end
-%------------
-case 'test',
-for i=1:vbe_maxIter,
-    % update phi
-    betas(doc.word_id,:) = mynormalize(model.beta(:,doc.word_id)'...
-        *diag(exp(psi(model.gammas(docIdx,:)))), 2);
-    
-    % update gamma
-    gammas = model.alpha + doc.word*betas(doc.word_id,:);
-    
-    if i> 1 && converged(model.gammas(docIdx,:), gammas, 1.0e-4),
-        model.gammas(docIdx,:) = gammas;
-        break;
-    end
-    model.gammas(docIdx,:) = gammas;
-end
-otherwise
-    error('Invalid choice.');
 end
