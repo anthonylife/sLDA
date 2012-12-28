@@ -80,8 +80,8 @@ for iter=1:em_max_iter,
     % variational bayesian E-step
     % ===========================
     for i=1:traindata.docnum,
-        [E_A(i,:), E_AA] = vbe_step(traindata.doc(i)...
-            , wordNum, E_AA, vbe_max_iter);
+        [E_A(i,:), E_AA] = vbe_step('train', traindata.doc(i)...
+            ,wordNum, E_AA, vbe_max_iter);
         accum_para(traindata.doc(i), wordNum);
     end
     
@@ -130,7 +130,7 @@ for i=1:testdata.docnum,
     testdata.doc(i).word_id = testdata.doc(i).word_id(idx_src);
     testdata.doc(i).word = testdata.doc(i).word(idx_src);
     
-    [temp0, temp1] = vbe_step(testdata.doc(i), wordNum, -1, vbe_max_iter);
+    [temp0, temp1] = vbe_step('test', testdata.doc(i), wordNum, -1, vbe_max_iter);
     aver_beta = sum(diag(testdata.doc(i).word)...
         *betas(testdata.doc(i).word_id, :), 1)...
         ./testdata.doc(i).docwordnum;
